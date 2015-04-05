@@ -6,6 +6,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import enslave.Enslave;
 import enslave.entity.ai.AIHarvestCrops;
 import enslave.entity.ai.AIHarvestLogs;
+import enslave.entity.ai.AIReturnHome;
 import enslave.item.ItemWhip;
 import net.minecraft.block.BlockColored;
 import net.minecraft.entity.Entity;
@@ -54,7 +55,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.setSize(modelWidth, modelHeight);
 		
 		this.getNavigator().setAvoidsWater(true);
-		this.setFollowOwner();
+		this.FollowOwner();
 
 		int randNum = itemRand.nextInt(2) + 1;
 		this.textureType = randNum;
@@ -99,21 +100,23 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	protected void setAILumberjack() {
 		this.clearAITasks();
-		this.tasks.addTask(1, new AIHarvestLogs(this));
-		this.setAIBase();
 		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, 25);
+		this.tasks.addTask(1, new AIHarvestLogs(this));
+		this.tasks.addTask(2, new AIReturnHome(this));
+		this.setAIBase();
 		this.aiSit.setSitting(false);	
 	}
 	
 	protected void setAIPicker() {
 		this.clearAITasks();
-		this.tasks.addTask(1, new AIHarvestCrops(this));
-		this.setAIBase();
 		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, 25);
+		this.tasks.addTask(1, new AIHarvestCrops(this));
+		this.tasks.addTask(2, new AIReturnHome(this));
+		this.setAIBase();
 		this.aiSit.setSitting(false);	
 	}
 	
-	protected void setFollowOwner () {
+	protected void FollowOwner () {
 		this.clearAITasks();
 		this.tasks.addTask(4, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
 		this.setAIBase();
@@ -157,6 +160,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 		
 	}
 
+
 	public static boolean spawnEnslavedVillager(World var0, double var2, double var4, double var6) {
         Object var8;
 
@@ -186,18 +190,19 @@ public class EntityEnslavedVillager extends EntityWolf {
             		player.swingItem();
             		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 0.8F));        
                     
-                    // sit or follow when whipped
-//                    this.setTarget((Entity)player);
-//                    this.setLeashedToEntity(player, true);
-            		
+            		// players can steal slaves with a whip from current owner
+            		// must be owner to leash slave and get them to follow you
+                    this.setTarget((Entity)player);
+                    if (!this.worldObj.isRemote) {
+                        if (this.rand.nextInt(3) == 0) {
+                        	this.func_152115_b(player.getUniqueID().toString());
+                        	this.playTameEffect(true);
+                        }
+                    }
             		
             	} else if (itemstack.getItem() instanceof ItemAxe) {
             		// if player interacts with axe, give axe to slave
-            		if (this.heldItem != null) {
-            			// if slave is already holding an item, drop it  			
-            			dropHeldItem();
-            		}
-            		this.heldItem = itemstack.getItem();
+            		this.setHeldItem(itemstack.getItem());
             		if (!player.capabilities.isCreativeMode) {
                         --itemstack.stackSize;
                     }
@@ -207,11 +212,7 @@ public class EntityEnslavedVillager extends EntityWolf {
             		
             	} else if (itemstack.getItem() instanceof ItemHoe) {
             		// if player interacts with hoe, give hoe to slave
-            		if (this.heldItem != null) {
-            			// if slave is already holding an item, drop it
-            			dropHeldItem();
-            		}
-            		this.heldItem = itemstack.getItem();
+            		this.setHeldItem(itemstack.getItem());
             		if (!player.capabilities.isCreativeMode) {
                         --itemstack.stackSize;
                     }
@@ -220,11 +221,7 @@ public class EntityEnslavedVillager extends EntityWolf {
             		
             	} else if (itemstack.getItem() instanceof ItemSword) {
             		// if player interacts with sword, give sword to slave
-            		if (this.heldItem != null) {
-            			// if slave is already holding an item, drop it
-            			dropHeldItem();
-            		}
-            		this.heldItem = itemstack.getItem();
+            		this.setHeldItem(itemstack.getItem());
             		if (!player.capabilities.isCreativeMode) {
                         --itemstack.stackSize;
                     }
@@ -253,6 +250,8 @@ public class EntityEnslavedVillager extends EntityWolf {
             	if (this.heldItem != null) {
             		this.dropHeldItem();
             	}
+            	
+            	this.FollowOwner();
             	return true;
             } 
 
@@ -295,6 +294,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 		return 0.6F;
 	}
 	
+//	Makes slave drop whatever their currently held item is
 	public void dropHeldItem() {
 		if (!this.worldObj.isRemote) {
 			this.dropItem(this.heldItem, 1);
@@ -304,11 +304,9 @@ public class EntityEnslavedVillager extends EntityWolf {
 		if (this.worldObj.isRemote) {
 			this.heldItem = null;
 		}
-		
-		// clear slave AI
-		//this.setFollowOwner();
 	}
 	
+//	Returns an ItemStack of the slave's current held item
 	public ItemStack getHeldItem() {
 		if (heldItem == null) {
 			return null;
@@ -316,6 +314,14 @@ public class EntityEnslavedVillager extends EntityWolf {
 			ItemStack heldStack = new ItemStack(heldItem);
 			return (ItemStack) heldStack;
 		}
+	}
+	
+//	Sets the slave's held item.  Automatically drops currently held item
+	public void setHeldItem(Item item) {
+		if (this.heldItem != null) {
+			this.dropHeldItem();
+		}
+		this.heldItem = item;
 	}
 	
 	public float getRange() {
@@ -372,7 +378,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 					   this.heldItem == Items.stone_pickaxe ||
 					   this.heldItem == Items.stone_shovel) {
 				
-				this.slaveStrength = 3;
+				this.slaveStrength = 4;
 				
 			} else if (this.heldItem == Items.iron_axe ||
 					   this.heldItem == Items.iron_hoe ||
@@ -388,13 +394,14 @@ public class EntityEnslavedVillager extends EntityWolf {
 					   this.heldItem == Items.diamond_pickaxe ||
 					   this.heldItem == Items.diamond_shovel) {
 				
-				this.slaveStrength = 10;
-				
+				this.slaveStrength = 10;				
 			}
 		} else {
 			this.slaveStrength = 1;
 		}
 		return this.slaveStrength;
 	}
+	
+	
 	
 }

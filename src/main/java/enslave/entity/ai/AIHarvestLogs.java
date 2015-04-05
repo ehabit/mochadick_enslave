@@ -13,6 +13,7 @@ import net.minecraft.block.Block.SoundType;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemAxe;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
@@ -57,6 +58,15 @@ public class AIHarvestLogs extends EntityAIBase {
     if ((this.delay >= 0) || (this.theSlave.ticksExisted % this.theSlave.slaveDelay > 0) || (!this.theSlave.getNavigator().noPath())) {
       return false;
     }
+    // if not holding an axe then return false, should not look for trees
+    if (this.theSlave.getHeldItem() == null) {
+    	return false;
+    } else {
+    	if (!(this.theSlave.getHeldItem().getItem() instanceof ItemAxe)) {
+    		return false;
+    	}
+    }
+    
     Vec3 var1 = findLog();
     if (var1 == null) {
       return false;
@@ -155,6 +165,10 @@ public class AIHarvestLogs extends EntityAIBase {
     this.theWorld.playAuxSFX(2001, this.xx, this.yy, this.zz, Block.getIdFromBlock(this.block) + (this.blockMd << 12));
     BlockUtils.breakFurthestBlock(this.theWorld, this.xx, this.yy, this.zz, this.block, this.player);
     this.theSlave.startActionTimer();
+    
+    // damage slave's tool
+    this.theSlave.getHeldItem().damageItem(1, this.player);
+    
   }
   
   private Vec3 findLog()

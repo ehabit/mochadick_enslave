@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="net.minecraft.item.Item"/>
+<fullyQualifiedTypeName name="net.minecraft.init.Items"/>
+<fullyQualifiedTypeName name="net.minecraft.init.Blocks"/>
+<fullyQualifiedTypeName name="enslave.entity.EntityEnslavedVillager"/>
+<fullyQualifiedTypeName name="enslave.entity.ai.AIReturnHome"/>
+</qualifiedTypeNameHistroy>

@@ -1,0 +1,5 @@
+package enslave.entity.ai;
+
+public class AIDoorInteract {
+
+}
