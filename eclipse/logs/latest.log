@@ -9,3 +9,50 @@
 [06:41:34] [Client thread/INFO]: Created: 256x256 textures/items-atlas
 [06:41:35] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
 [06:41:35] [Sound Library Loader/INFO]: Sound engine started
+[06:43:23] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
+[06:43:23] [Server thread/INFO]: Generating keypair
+[06:43:25] [Server thread/INFO]: Preparing start region for level 0
+[06:43:26] [Server thread/INFO]: Preparing spawn area: 6%
+[06:43:27] [Server thread/INFO]: Preparing spawn area: 77%
+[06:43:27] [Server thread/INFO]: Changing view distance to 4, from 10
+[06:43:29] [Server thread/INFO]: Player965[local:E:13ee3303] logged in with entity id 204 at (-243.5362378625168, 67.1116330269739, -11.930704652257702)
+[06:43:29] [Server thread/INFO]: Player965 joined the game
+[06:43:31] [Server thread/WARN]: Can't keep up! Did the system time change, or is the server overloaded? Running 3081ms behind, skipping 61 tick(s)
+[06:43:37] [Server thread/INFO]: [Player965: Set the time to 1000]
+[06:43:37] [Client thread/INFO]: [CHAT] Set the time to 1000
+[06:44:10] [Server thread/INFO]: Player965 has just earned the achievement [Taking Inventory]
+[06:44:10] [Client thread/INFO]: [CHAT] Player965 has just earned the achievement [Taking Inventory]
+[06:44:13] [Server thread/INFO]: Saving and pausing game...
+[06:44:13] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[06:44:13] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[06:44:13] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[06:44:14] [Server thread/INFO]: Stopping server
+[06:44:14] [Server thread/INFO]: Saving players
+[06:44:14] [Server thread/INFO]: Saving worlds
+[06:44:14] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[06:44:14] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[06:44:14] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[06:45:34] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
+[06:45:34] [Server thread/INFO]: Generating keypair
+[06:45:35] [Server thread/INFO]: Preparing start region for level 0
+[06:45:36] [Server thread/INFO]: Preparing spawn area: 60%
+[06:45:36] [Server thread/INFO]: Changing view distance to 4, from 10
+[06:45:36] [Server thread/INFO]: Player965[local:E:d45f6780] logged in with entity id 1249 at (-250.97137507311464, 67.0, 12.011550004854225)
+[06:45:36] [Server thread/INFO]: Player965 joined the game
+[06:46:27] [Server thread/INFO]: Player965 has just earned the achievement [Getting Wood]
+[06:46:27] [Client thread/INFO]: [CHAT] Player965 has just earned the achievement [Getting Wood]
+[06:47:00] [Server thread/INFO]: Saving and pausing game...
+[06:47:00] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[06:47:00] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[06:47:00] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[06:48:19] [Server thread/INFO]: Saving and pausing game...
+[06:48:19] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[06:48:19] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[06:48:19] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[06:48:19] [Server thread/INFO]: Stopping server
+[06:48:19] [Server thread/INFO]: Saving players
+[06:48:19] [Server thread/INFO]: Saving worlds
+[06:48:19] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[06:48:19] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[06:48:19] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[06:48:28] [Client thread/INFO]: Stopping!

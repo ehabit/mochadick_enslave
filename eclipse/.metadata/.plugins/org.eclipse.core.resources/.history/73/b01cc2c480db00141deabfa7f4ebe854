@@ -102,7 +102,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.tasks.addTask(1, new AIHarvestLogs(this));
 		this.setAIBase();
 		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, 25);
-		this.aiSit.setSitting(false);	
+		this.aiSit.setSitting(false);
+		
 	}
 	
 	protected void setAIPicker() {
@@ -110,7 +111,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.tasks.addTask(1, new AIHarvestCrops(this));
 		this.setAIBase();
 		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, 25);
-		this.aiSit.setSitting(false);	
+		this.aiSit.setSitting(false);
+		
 	}
 	
 	protected void setFollowOwner () {
@@ -148,10 +150,11 @@ public class EntityEnslavedVillager extends EntityWolf {
 		
 		for (int k = 0; k < random; ++k) {
 			if (k==2) {
-//				this.dropItem(Enslave.shackles, 1);
-				this.dropItem(Items.iron_ingot, 1);
+				this.dropItem(Enslave.shackles, 1);
 			} else if (k == 1) {
 				this.dropItem(Items.iron_ingot, 2);
+			} else {
+				this.dropItem(Items.iron_ingot, 1);
 			}
 		}
 		

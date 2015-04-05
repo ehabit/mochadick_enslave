@@ -148,10 +148,11 @@ public class EntityEnslavedVillager extends EntityWolf {
 		
 		for (int k = 0; k < random; ++k) {
 			if (k==2) {
-//				this.dropItem(Enslave.shackles, 1);
-				this.dropItem(Items.iron_ingot, 1);
+				this.dropItem(Enslave.shackles, 1);
 			} else if (k == 1) {
 				this.dropItem(Items.iron_ingot, 2);
+			} else {
+				this.dropItem(Items.iron_ingot, 1);
 			}
 		}
 		
