@@ -15,4 +15,6 @@ Enslave is currently compatible with Minecraft 1.7.10.
 
 + Slaves increase in skill as they work. 
 
-+ Sell highly skilled slaves at auction.
++ Sell highly skilled slaves at auction. 
+
++ Become the most villainous mother fucking slaver in the world.
