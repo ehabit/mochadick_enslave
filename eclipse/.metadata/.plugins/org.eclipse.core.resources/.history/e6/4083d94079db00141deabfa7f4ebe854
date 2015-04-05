@@ -1,0 +1,16 @@
+[
+{
+  "modid": "enslave",
+  "name": "Enslave",
+  "description": "Enslave lets you be a slaver.  Enslave villagers to farm, cut trees and kill mobs for you.",
+  "version": "0.1",
+  "mcversion": "1.7.10",
+  "url": "http://ehabit.github.io/mochadick/",
+  "updateUrl": "",
+  "authorList": ["Glen Baker", "Samuel Trojano", "Matt Craven", "Bobby Hawk", "Mitch Sadd", "Steve Robins"],
+  "credits": "To all our fellow lost boys and girls, we hope this brings you joy on this sullen sea.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
