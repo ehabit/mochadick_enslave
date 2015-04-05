@@ -13,7 +13,7 @@ Thumbs.db
 /.classpath
 /.project
 /bin
-/eclipse/saves
+/eclipse/saves/*
 
 ## intellij
 /out
