@@ -44,6 +44,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 	public static int slaveDelay = 5;
     public static int slaveIgnoreDelay = 10000;
     private int slaveStrength = 1;
+	
+    private float hunger;
     
     
 	private Item heldItem;
@@ -57,7 +59,9 @@ public class EntityEnslavedVillager extends EntityWolf {
 
 		int randNum = itemRand.nextInt(2) + 1;
 		this.textureType = randNum;
-
+		
+		
+		this.hunger = 100.0F;
 	}
 	
 	public static void mainRegistry(Class entityClass, String name) {
