@@ -40,7 +40,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 	private static final Float modelHeight = 1.8F;
 	private static final Float modelWidth = 0.6F;
 	
-	public static int slaveDelay = 3;
+	public static int slaveDelay = 5;
     public static int slaveIgnoreDelay = 10000;
     private int slaveStrength = 1;
 	
@@ -86,6 +86,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	protected void setAIBase() {
         this.tasks.addTask(1, new EntityAISwimming(this));
+        
+        this.tasks.addTask(3, this.aiSit);
         this.tasks.addTask(4, new EntityAILeapAtTarget(this, 0.4F));
         this.tasks.addTask(5, new EntityAIAttackOnCollide(this, 1.0D, true));
         this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
@@ -97,21 +99,25 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	protected void setAILumberjack() {
 		this.clearAITasks();
+		this.tasks.addTask(1, new AIHarvestLogs(this));
 		this.setAIBase();
-		this.tasks.addTask(2, new AIHarvestLogs(this));
+		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, 25);
+		this.aiSit.setSitting(false);
+		
 	}
 	
 	protected void setAIPicker() {
 		this.clearAITasks();
-		this.setAIBase();
 		this.tasks.addTask(2, new AIHarvestCrops(this));
+		this.setAIBase();
+		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, 25);
+		this.aiSit.setSitting(false);
+		
 	}
 	
 	protected void setFollowOwner () {
 		this.clearAITasks();
-		
 		this.tasks.addTask(4, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
-        
 		this.setAIBase();
 	}
 	
@@ -134,6 +140,25 @@ public class EntityEnslavedVillager extends EntityWolf {
 	public float getEyeHeight()  {
         return this.height * modelHeight;
     }
+	
+	protected void dropFewItems(boolean par1, int par2) {
+		if (this.heldItem != null) {
+			this.dropHeldItem();
+		}
+		
+		int random = this.rand.nextInt(3) + 1 + this.rand.nextInt(1 + par2);
+		
+		for (int k = 0; k < random; ++k) {
+			if (k==2) {
+				this.dropItem(Enslave.shackles, 1);
+			} else if (k == 1) {
+				this.dropItem(Items.iron_ingot, 2);
+			} else {
+				this.dropItem(Items.iron_ingot, 1);
+			}
+		}
+		
+	}
 
 	public static boolean spawnEnslavedVillager(World var0, double var2, double var4, double var6) {
         Object var8;
@@ -165,9 +190,10 @@ public class EntityEnslavedVillager extends EntityWolf {
             		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 0.8F));        
                     
                     // sit or follow when whipped
-                    this.setTarget((Entity)player);
-                    this.setLeashedToEntity(player, true);
-                    
+//                    this.setTarget((Entity)player);
+//                    this.setLeashedToEntity(player, true);
+            		
+            		
             	} else if (itemstack.getItem() instanceof ItemAxe) {
             		// if player interacts with axe, give axe to slave
             		if (this.heldItem != null) {
@@ -178,8 +204,9 @@ public class EntityEnslavedVillager extends EntityWolf {
             		if (!player.capabilities.isCreativeMode) {
                         --itemstack.stackSize;
                     }
-            		
+            				
             		setAILumberjack();
+            		
             		
             	} else if (itemstack.getItem() instanceof ItemHoe) {
             		// if player interacts with hoe, give hoe to slave
@@ -295,7 +322,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public float getRange() {
-	    float dmod = 16 + 20 * 4;
+	    float dmod = 16 + 10 * 4;
 	    dmod += Math.max(dmod * 0.2F, 2.0F);
 	    return dmod;
 	}
@@ -356,7 +383,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 					   this.heldItem == Items.iron_pickaxe ||
 					   this.heldItem == Items.iron_shovel) {
 				
-				this.slaveStrength = 4;
+				this.slaveStrength = 6;
 				
 			} else if (this.heldItem == Items.diamond_axe ||
 					   this.heldItem == Items.diamond_hoe ||
@@ -364,7 +391,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 					   this.heldItem == Items.diamond_pickaxe ||
 					   this.heldItem == Items.diamond_shovel) {
 				
-				this.slaveStrength = 5;
+				this.slaveStrength = 10;
 				
 			}
 		} else {

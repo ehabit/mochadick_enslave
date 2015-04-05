@@ -1,5 +1,5 @@
 package enslave.entity.ai;
-//Modified Golem AI from Azanor
+// Modified AI originally from Azanor's Thaumcraft
 
 import com.mojang.authlib.GameProfile;
 

@@ -1,32 +1,11 @@
-[05:46:26] [main/INFO]: Setting user: Player402
-[05:46:30] [Client thread/INFO]: LWJGL Version: 2.9.1
-[05:46:30] [Client thread/ERROR]: Couldn't initialize twitch stream
-[05:46:41] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
-[05:46:44] [Sound Library Loader/INFO]: Sound engine started
-[05:46:49] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
-[05:46:49] [Client thread/INFO]: Created: 256x256 textures/items-atlas
-[05:46:50] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
-[05:46:50] [Client thread/INFO]: Created: 256x256 textures/items-atlas
-[05:46:51] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
-[05:46:52] [Sound Library Loader/INFO]: Sound engine started
-[05:47:05] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
-[05:47:05] [Server thread/INFO]: Generating keypair
-[05:47:06] [Server thread/INFO]: Preparing start region for level 0
-[05:47:07] [Server thread/INFO]: Preparing spawn area: 21%
-[05:47:09] [Server thread/INFO]: Changing view distance to 6, from 10
-[05:47:09] [Server thread/INFO]: Player402[local:E:e658a2db] logged in with entity id 261 at (-246.93425901823204, 68.0, 4.5897829291928725)
-[05:47:09] [Server thread/INFO]: Player402 joined the game
-[05:47:14] [Server thread/WARN]: Can't keep up! Did the system time change, or is the server overloaded? Running 5432ms behind, skipping 108 tick(s)
-[05:47:31] [Server thread/INFO]: Player402 has just earned the achievement [Taking Inventory]
-[05:47:31] [Client thread/INFO]: [CHAT] Player402 has just earned the achievement [Taking Inventory]
-[05:49:34] [Server thread/INFO]: Saving and pausing game...
-[05:49:34] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
-[05:49:35] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
-[05:49:35] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
-[05:49:35] [Server thread/INFO]: Stopping server
-[05:49:35] [Server thread/INFO]: Saving players
-[05:49:35] [Server thread/INFO]: Saving worlds
-[05:49:35] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
-[05:49:35] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
-[05:49:35] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
-[05:49:38] [Client thread/INFO]: Stopping!
+[06:41:03] [main/INFO]: Setting user: Player965
+[06:41:07] [Client thread/INFO]: LWJGL Version: 2.9.1
+[06:41:08] [Client thread/ERROR]: Couldn't initialize twitch stream
+[06:41:24] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
+[06:41:28] [Sound Library Loader/INFO]: Sound engine started
+[06:41:33] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
+[06:41:33] [Client thread/INFO]: Created: 256x256 textures/items-atlas
+[06:41:33] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
+[06:41:34] [Client thread/INFO]: Created: 256x256 textures/items-atlas
+[06:41:35] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
+[06:41:35] [Sound Library Loader/INFO]: Sound engine started

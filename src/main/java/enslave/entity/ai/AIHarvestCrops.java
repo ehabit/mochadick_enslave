@@ -1,5 +1,5 @@
 package enslave.entity.ai;
-// Modified Golem AI from Azanor
+//Modified AI originally from Azanor's Thaumcraft
 
 import com.mojang.authlib.GameProfile;
 
@@ -37,14 +37,6 @@ import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.ForgeDirection;
-//import thaumcraft.api.BlockCoordinates;
-//import thaumcraft.common.config.Config;
-//import thaumcraft.common.config.ConfigBlocks;
-//import thaumcraft.common.config.ConfigItems;
-//import thaumcraft.common.entities.golems.EntityGolemBase;
-//import thaumcraft.common.lib.utils.BlockUtils;
-//import thaumcraft.common.lib.utils.CropUtils;
-//import thaumcraft.common.lib.utils.EntityUtils;
 
 public class AIHarvestCrops extends EntityAIBase {
   private EntityEnslavedVillager theSlave;
