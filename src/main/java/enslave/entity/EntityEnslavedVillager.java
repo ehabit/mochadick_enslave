@@ -3,11 +3,13 @@ package enslave.entity;
 import java.util.Random;
 
 import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameData;
 import enslave.Enslave;
 import enslave.entity.ai.AIHarvestCrops;
 import enslave.entity.ai.AIHarvestLogs;
 import enslave.entity.ai.AIReturnHome;
 import enslave.item.ItemWhip;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -30,12 +32,14 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.util.RegistryNamespaced;
 import net.minecraft.world.World;
 
 
 public class EntityEnslavedVillager extends EntityWolf {
-	
+	public static final RegistryNamespaced itemRegistry = GameData.getItemRegistry();
 	public Integer textureType;
 	protected static Random itemRand = new Random();
 	private static final Float modelHeight = 1.8F;
@@ -45,7 +49,15 @@ public class EntityEnslavedVillager extends EntityWolf {
     public static int slaveIgnoreDelay = 10000;
     private int slaveStrength = 1;
     
+    private final int TEXTURE_TYPE_WATCHER = 30;
+    private final int HELD_ITEM_WATCHER = 31;
     
+	
+	public int action = 0;
+	public int leftArm = 0;
+	public int rightArm = 0;
+	public int healing = 0;
+	
 	private Item heldItem;
 	
 	public EntityEnslavedVillager(World world) {
@@ -54,12 +66,14 @@ public class EntityEnslavedVillager extends EntityWolf {
 		
 		this.getNavigator().setAvoidsWater(true);
 		this.FollowOwner();
-
+		
 		int randNum = itemRand.nextInt(2) + 1;
 		this.textureType = randNum;
+		
 
 	}
 	
+
 	public static void mainRegistry(Class entityClass, String name) {
 		int entityID = EntityRegistry.findGlobalUniqueEntityId();
 		long seed = name.hashCode();
@@ -96,7 +110,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	protected void setAILumberjack() {
 		this.clearAITasks();
-		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, 25);
+		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, (int) this.getRange());
 		this.tasks.addTask(1, new AIHarvestLogs(this));
 		this.tasks.addTask(2, new AIReturnHome(this));
 		this.setAIBase();
@@ -105,8 +119,19 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	protected void setAIPicker() {
 		this.clearAITasks();
-		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, 25);
+		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, (int) this.getRange());
 		this.tasks.addTask(1, new AIHarvestCrops(this));
+		this.tasks.addTask(2, new AIReturnHome(this));
+		this.setAIBase();
+		this.aiSit.setSitting(false);	
+	}
+	
+	protected void setAIGladiator() {
+		this.clearAITasks();
+		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, (int) this.getRange());
+		
+		// TODO Add Gladiator AI
+		
 		this.tasks.addTask(2, new AIReturnHome(this));
 		this.setAIBase();
 		this.aiSit.setSitting(false);	
@@ -174,6 +199,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 	public void onUpdate() {
 		 super.onUpdate();
 		 
+		 
 	}
 	
 	@Override
@@ -221,6 +247,7 @@ public class EntityEnslavedVillager extends EntityWolf {
             		if (!player.capabilities.isCreativeMode) {
                         --itemstack.stackSize;
                     }
+            		this.setAIGladiator();
             		
             	} else if (itemstack.getItem() instanceof ItemFood) {
             		// feed slave
@@ -312,6 +339,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 		}
 	}
 	
+	
+	
 //	Sets the slave's held item.  Automatically drops currently held item
 	public void setHeldItem(Item item) {
 		if (this.heldItem != null) {
@@ -325,11 +354,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 	    dmod += Math.max(dmod * 0.2F, 2.0F);
 	    return dmod;
 	}
-	
-	public int action = 0;
-	public int leftArm = 0;
-	public int rightArm = 0;
-	public int healing = 0;
 	  
 	public int getActionTimer() {
 		return 3 - Math.abs(this.action - 3);
@@ -392,12 +416,65 @@ public class EntityEnslavedVillager extends EntityWolf {
 				
 				this.slaveStrength = 10;				
 			}
-		} else {
+		} else { 
 			this.slaveStrength = 1;
 		}
 		return this.slaveStrength;
 	}
 	
+	public int getHeldItemType() {
+		return this.heldItem.getIdFromItem(this.heldItem);
+	}
+	
+	public void setHeldItemByType(int type) {
+		if (type == 0) {
+			this.heldItem = null;
+		} else {
+			
+			Item newHeldItem = (Item)itemRegistry.getObjectById(type);
+			this.heldItem = newHeldItem;
+		}
+	}
+	
+	public void setAIByHeldItem() {
+		if (this.heldItem != null) {
+			if (this.heldItem instanceof ItemAxe) {
+				this.setAILumberjack();
+			} else if (this.heldItem instanceof ItemHoe) {
+				this.setAIPicker();
+			}
+		} else {
+			this.setAIBase();
+		}
+	}
+	
+	
+	@Override
+	protected void entityInit() {
+        super.entityInit();        
+    }
+
+	@Override
+    public void writeEntityToNBT(NBTTagCompound compound) {
+        super.writeEntityToNBT(compound);
+//        compound.setInteger("TextureType", this.textureType);
+        
+//        this.dataWatcher.updateObject(TEXTURE_TYPE_WATCHER, this.textureType);
+        
+        
+//        compound.setInteger("HeldItem", this.getHeldItemType());
+//        this.dataWatcher.updateObject(HELD_ITEM_WATCHER, properties.getInteger("HeldItem"));
+    }
+
+	@Override
+    public void readEntityFromNBT(NBTTagCompound compound) {
+        super.readEntityFromNBT(compound);
+        
+        // Retrieve texture type from dataWatcher
+//        this.textureType = this.dataWatcher.getWatchableObjectInt(TEXTURE_TYPE_WATCHER);
+        
+//        this.setHeldItemByType(compound.getInteger("HeldItem"));
+    }
 	
 	
 }

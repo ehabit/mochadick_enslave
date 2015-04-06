@@ -1,5 +1,7 @@
 package enslave;
 
+import net.minecraftforge.common.MinecraftForge;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,6 +12,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import enslave.entity.EntityEnslavedVillager;
+import enslave.handler.EnslavedVillagerHandler;
 import enslave.item.ItemShackles;
 import enslave.item.ItemWhip;
 
@@ -32,6 +35,7 @@ public class Enslave {
     public static ItemShackles shackles;
     public static ItemWhip whip;
     
+    
     @EventHandler
     public void PreLoad(FMLPreInitializationEvent PreEvent) {
     	log.info("Registering items");
@@ -40,6 +44,8 @@ public class Enslave {
     	
     	log.info("Registering entities");
     	EntityEnslavedVillager.mainRegistry();
+    	
+    	MinecraftForge.EVENT_BUS.register(new EnslavedVillagerHandler());
     }
     
     @EventHandler

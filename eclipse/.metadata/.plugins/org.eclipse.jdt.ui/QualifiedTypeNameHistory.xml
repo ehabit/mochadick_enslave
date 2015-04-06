@@ -3,6 +3,11 @@
 <fullyQualifiedTypeName name="net.minecraft.item.Item"/>
 <fullyQualifiedTypeName name="net.minecraft.init.Items"/>
 <fullyQualifiedTypeName name="net.minecraft.init.Blocks"/>
-<fullyQualifiedTypeName name="enslave.entity.EntityEnslavedVillager"/>
 <fullyQualifiedTypeName name="enslave.entity.ai.AIReturnHome"/>
+<fullyQualifiedTypeName name="cpw.mods.fml.common.eventhandler.SubscribeEvent"/>
+<fullyQualifiedTypeName name="net.minecraftforge.event.entity.EntityEvent.EntityConstructing"/>
+<fullyQualifiedTypeName name="enslave.entity.EntityEnslavedVillager"/>
+<fullyQualifiedTypeName name="net.minecraftforge.common.MinecraftForge"/>
+<fullyQualifiedTypeName name="enslave.handler.EnslavedVillagerHandler"/>
+<fullyQualifiedTypeName name="net.minecraftforge.client.event.RenderLivingEvent"/>
 </qualifiedTypeNameHistroy>

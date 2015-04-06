@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="267" key="DIALOG_WIDTH"/>
-		<item value="75" key="DIALOG_Y_ORIGIN"/>
-		<item value="403" key="DIALOG_HEIGHT"/>
-		<item value="713" key="DIALOG_X_ORIGIN"/>
+		<item value="275" key="DIALOG_WIDTH"/>
+		<item value="198" key="DIALOG_Y_ORIGIN"/>
+		<item value="52" key="DIALOG_X_ORIGIN"/>
+		<item value="407" key="DIALOG_HEIGHT"/>
 		<item value="1|Ubuntu|10.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="isRegEx"/>
 		<item value="false" key="casesensitive"/>
+		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="harvest" key="selection"/>
+		<item value="" key="selection"/>
 		<list key="findhistory">
-			<item value="harvest"/>
+			<item value="texture"/>
+			<item value="TEXTURE_TYPE_WATCHER"/>
+			<item value="textureType"/>
+			<item value="glad"/>
+			<item value="range"/>
 			<item value="getHeldItem"/>
-			<item value="func"/>
-			<item value="func_75251_c"/>
-			<item value="func_75249_e"/>
-			<item value="func_76128_c"/>
-			<item value="field_70177_z"/>
-			<item value="func_149895_l"/>
+			<item value="heldget"/>
+			<item value="held"/>
 		</list>
 		<list key="replacehistory">
+			<item value="HELD_ITEM_WATCHER"/>
 			<item value="resetTask"/>
 			<item value="startExecuting"/>
 			<item value="floor_double"/>
@@ -32,7 +33,6 @@
 			<item value="getDirection"/>
 			<item value="updateTask"/>
 			<item value="playAuxSFXAtEntity"/>
-			<item value="setBlock"/>
 		</list>
 	</section>
 </section>

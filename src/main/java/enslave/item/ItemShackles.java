@@ -36,6 +36,11 @@ public class ItemShackles extends Item {
 		return 0;
 	}
 	
+	@SideOnly(Side.CLIENT)
+    public boolean shouldRotateAroundWhenRendering() {
+        return true;
+    }
+	
 	
 	@Override
 	public boolean hitEntity(ItemStack itemstack, EntityLivingBase target, EntityLivingBase player){

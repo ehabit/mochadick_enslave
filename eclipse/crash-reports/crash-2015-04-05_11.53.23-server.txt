@@ -1,0 +1,88 @@
+---- Minecraft Crash Report ----
+// I let you down. Sorry :(
+
+Time: 4/5/15 11:53 AM
+Description: Ticking memory connection
+
+java.lang.IllegalArgumentException: Unknown data type: class java.lang.Object
+	at net.minecraft.entity.DataWatcher.addObject(DataWatcher.java:48)
+	at enslave.entity.EntityEnslavedVillager.entityInit(EntityEnslavedVillager.java:411)
+	at net.minecraft.entity.Entity.<init>(Entity.java:220)
+	at net.minecraft.entity.EntityLivingBase.<init>(EntityLivingBase.java:155)
+	at net.minecraft.entity.EntityLiving.<init>(EntityLiving.java:78)
+	at net.minecraft.entity.EntityCreature.<init>(EntityCreature.java:36)
+	at net.minecraft.entity.EntityAgeable.<init>(EntityAgeable.java:17)
+	at net.minecraft.entity.passive.EntityAnimal.<init>(EntityAnimal.java:34)
+	at net.minecraft.entity.passive.EntityTameable.<init>(EntityTameable.java:22)
+	at net.minecraft.entity.passive.EntityWolf.<init>(EntityWolf.java:52)
+	at enslave.entity.EntityEnslavedVillager.<init>(EntityEnslavedVillager.java:56)
+	at enslave.item.ItemShackles.hitEntity(ItemShackles.java:55)
+	at net.minecraft.item.ItemStack.hitEntity(ItemStack.java:371)
+	at net.minecraft.entity.player.EntityPlayer.attackTargetEntityWithCurrentItem(EntityPlayer.java:1436)
+	at net.minecraft.network.NetHandlerPlayServer.processUseEntity(NetHandlerPlayServer.java:881)
+	at net.minecraft.network.play.client.C02PacketUseEntity.processPacket(C02PacketUseEntity.java:51)
+	at net.minecraft.network.play.client.C02PacketUseEntity.processPacket(C02PacketUseEntity.java:69)
+	at net.minecraft.network.NetworkManager.processReceivedPackets(NetworkManager.java:241)
+	at net.minecraft.network.NetworkSystem.networkTick(NetworkSystem.java:182)
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:726)
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:614)
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:118)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:485)
+	at net.minecraft.server.MinecraftServer$2.run(MinecraftServer.java:752)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Stacktrace:
+	at net.minecraft.entity.DataWatcher.addObject(DataWatcher.java:48)
+	at enslave.entity.EntityEnslavedVillager.entityInit(EntityEnslavedVillager.java:411)
+	at net.minecraft.entity.Entity.<init>(Entity.java:220)
+	at net.minecraft.entity.EntityLivingBase.<init>(EntityLivingBase.java:155)
+	at net.minecraft.entity.EntityLiving.<init>(EntityLiving.java:78)
+	at net.minecraft.entity.EntityCreature.<init>(EntityCreature.java:36)
+	at net.minecraft.entity.EntityAgeable.<init>(EntityAgeable.java:17)
+	at net.minecraft.entity.passive.EntityAnimal.<init>(EntityAnimal.java:34)
+	at net.minecraft.entity.passive.EntityTameable.<init>(EntityTameable.java:22)
+	at net.minecraft.entity.passive.EntityWolf.<init>(EntityWolf.java:52)
+	at enslave.entity.EntityEnslavedVillager.<init>(EntityEnslavedVillager.java:56)
+	at enslave.item.ItemShackles.hitEntity(ItemShackles.java:55)
+	at net.minecraft.item.ItemStack.hitEntity(ItemStack.java:371)
+	at net.minecraft.entity.player.EntityPlayer.attackTargetEntityWithCurrentItem(EntityPlayer.java:1436)
+	at net.minecraft.network.NetHandlerPlayServer.processUseEntity(NetHandlerPlayServer.java:881)
+	at net.minecraft.network.play.client.C02PacketUseEntity.processPacket(C02PacketUseEntity.java:51)
+	at net.minecraft.network.play.client.C02PacketUseEntity.processPacket(C02PacketUseEntity.java:69)
+	at net.minecraft.network.NetworkManager.processReceivedPackets(NetworkManager.java:241)
+
+-- Ticking connection --
+Details:
+	Connection: net.minecraft.network.NetworkManager@6efdd42a
+Stacktrace:
+	at net.minecraft.network.NetworkSystem.networkTick(NetworkSystem.java:182)
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:726)
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:614)
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:118)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:485)
+	at net.minecraft.server.MinecraftServer$2.run(MinecraftServer.java:752)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.7.10
+	Operating System: Linux (amd64) version 3.8.11
+	Java Version: 1.7.0_75, Oracle Corporation
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode), Oracle Corporation
+	Memory: 861459744 bytes (821 MB) / 1056309248 bytes (1007 MB) up to 1056309248 bytes (1007 MB)
+	JVM Flags: 3 total; -Xincgc -Xmx1024M -Xms1024M
+	AABB Pool Size: 0 (0 bytes; 0 MB) allocated, 0 (0 bytes; 0 MB) used
+	IntCache: cache: 0, tcache: 0, allocated: 13, tallocated: 95
+	FML: MCP v9.05 FML v7.10.103.1352 Minecraft Forge 10.13.2.1352 4 mods loaded, 4 mods active
+	mcp{9.05} [Minecraft Coder Pack] (minecraft.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	FML{7.10.103.1352} [Forge Mod Loader] (forgeSrc-1.7.10-10.13.2.1352-1.7.10.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	Forge{10.13.2.1352} [Minecraft Forge] (forgeSrc-1.7.10-10.13.2.1352-1.7.10.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	enslave{0.1} [Enslave] (bin) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	Profiler Position: N/A (disabled)
+	Vec3 Pool Size: 0 (0 bytes; 0 MB) allocated, 0 (0 bytes; 0 MB) used
+	Player Count: 1 / 8; [EntityPlayerMP['Player90'/205, l='Enslave', x=-247.65, y=68.00, z=4.05]]
+	Type: Integrated Server (map_client.txt)
+	Is Modded: Definitely; Client brand changed to 'fml,forge'
