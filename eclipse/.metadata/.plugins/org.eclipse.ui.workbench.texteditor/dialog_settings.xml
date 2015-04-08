@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="287" key="DIALOG_WIDTH"/>
+		<item value="295" key="DIALOG_WIDTH"/>
 		<item value="198" key="DIALOG_Y_ORIGIN"/>
-		<item value="400" key="DIALOG_HEIGHT"/>
 		<item value="52" key="DIALOG_X_ORIGIN"/>
+		<item value="404" key="DIALOG_HEIGHT"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="isRegEx"/>
 		<item value="false" key="casesensitive"/>
+		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
 		<item value="getHeldItemType" key="selection"/>
 		<list key="findhistory">
 			<item value="getHeldItemType"/>
-			<item value="initSync"/>
-			<item value="sync"/>
 			<item value="getHeldItem"/>
-			<item value="texture"/>
-			<item value="TEXTURE_TYPE_WATCHER"/>
-			<item value="textureType"/>
-			<item value="glad"/>
+			<item value="entityInit"/>
+			<item value="null"/>
+			<item value="register"/>
+			<item value="setHeldItemByType"/>
+			<item value="sync"/>
+			<item value="MessageSyncEntityToClient"/>
 		</list>
 		<list key="replacehistory">
 			<item value="HELD_ITEM_WATCHER"/>

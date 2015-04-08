@@ -4,8 +4,6 @@
 <fullyQualifiedTypeName name="net.minecraft.init.Items"/>
 <fullyQualifiedTypeName name="net.minecraft.init.Blocks"/>
 <fullyQualifiedTypeName name="enslave.entity.ai.AIReturnHome"/>
-<fullyQualifiedTypeName name="cpw.mods.fml.common.eventhandler.SubscribeEvent"/>
-<fullyQualifiedTypeName name="net.minecraftforge.event.entity.EntityEvent.EntityConstructing"/>
 <fullyQualifiedTypeName name="net.minecraftforge.common.MinecraftForge"/>
 <fullyQualifiedTypeName name="enslave.handler.EnslavedVillagerHandler"/>
 <fullyQualifiedTypeName name="net.minecraftforge.client.event.RenderLivingEvent"/>
@@ -22,7 +20,6 @@
 <fullyQualifiedTypeName name="io.netty.buffer.ByteBuf"/>
 <fullyQualifiedTypeName name="cpw.mods.fml.common.network.simpleimpl.MessageContext"/>
 <fullyQualifiedTypeName name="net.minecraft.nbt.NBTTagCompound"/>
-<fullyQualifiedTypeName name="enslave.entity.EntityEnslavedVillager"/>
 <fullyQualifiedTypeName name="net.minecraft.entity.Entity"/>
 <fullyQualifiedTypeName name="cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper"/>
 <fullyQualifiedTypeName name="cpw.mods.fml.common.network.FMLEventChannel"/>
@@ -35,4 +32,11 @@
 <fullyQualifiedTypeName name="enslave.network.MessageToClient"/>
 <fullyQualifiedTypeName name="cpw.mods.fml.common.event.FMLPreInitializationEvent"/>
 <fullyQualifiedTypeName name="lib.Utils"/>
+<fullyQualifiedTypeName name="net.minecraftforge.common.IExtendedEntityProperties"/>
+<fullyQualifiedTypeName name="cpw.mods.fml.common.eventhandler.SubscribeEvent"/>
+<fullyQualifiedTypeName name="net.minecraftforge.event.entity.EntityEvent.EntityConstructing"/>
+<fullyQualifiedTypeName name="enslave.entity.EntityEnslavedVillager"/>
+<fullyQualifiedTypeName name="enslave.entity.ExtendedSlave"/>
+<fullyQualifiedTypeName name="enslave.network.handler.EnslavedVillagerSyncHandler"/>
+<fullyQualifiedTypeName name="net.minecraftforge.event.entity.EntityJoinWorldEvent"/>
 </qualifiedTypeNameHistroy>

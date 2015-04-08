@@ -44,7 +44,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	public static final RegistryNamespaced itemRegistry = GameData.getItemRegistry();
 	public Integer textureType;
-	protected static Random itemRand = new Random();
 	private static final Float modelHeight = 1.8F;
 	private static final Float modelWidth = 0.6F;
 	
@@ -58,11 +57,22 @@ public class EntityEnslavedVillager extends EntityWolf {
 	public int rightArm = 0;
 	public int healing = 0;
 	
-	private Item heldItem;
+
+	private Item itemDrop = null;
+	private int heldItemDamage;
+	
+	// revolt increases the longer a slave is held without supervision
+	private int revoltLevel;
+	
+	private int lumberjackSkill;
+	private int pickerSkill;
+	private int gladiatorSkill;
+	
+	// Watchers need to sync client and server side for rendering purposes
+	private final int HELD_ITEM_WATCHER = 25;
+	private final int TEXTURE_TYPE_WATCHER = 26;
 	
 	
-	private final int HELD_ITEM_WATCHER = 28;
-	private final int TEXTURE_TYPE_WATCHER = 29;
 	
 	public EntityEnslavedVillager(World world) {
 		super(world);
@@ -75,16 +85,11 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.dataWatcher.addObject(HELD_ITEM_WATCHER, Integer.valueOf(0));
 		this.dataWatcher.addObject(TEXTURE_TYPE_WATCHER, Integer.valueOf(0));
 		
-		int randNum = itemRand.nextInt(2) + 1;
+		int randNum = this.rand.nextInt(2) + 1;
 		this.textureType = randNum;
 		this.textureType = this.getTextureType();
 		
-		
-		this.heldItem = null;
-		ItemStack heldItemStack = this.getHeldItem();
-		if (heldItemStack != null) {
-			this.heldItem = heldItemStack.getItem();
-		}
+		this.setAIByHeldItem();
 	}
 	
 	public int getTextureType() {
@@ -187,7 +192,7 @@ public class EntityEnslavedVillager extends EntityWolf {
     }
 	
 	protected void dropFewItems(boolean par1, int par2) {
-		if (this.heldItem != null) {
+		if (this.getHeldItem() != null) {
 			this.dropHeldItem();
 		}
 		
@@ -195,13 +200,24 @@ public class EntityEnslavedVillager extends EntityWolf {
 		
 		for (int k = 0; k < random; ++k) {
 			if (k==2) {
-//				this.dropItem(Enslave.shackles, 1);
 				this.dropItem(Items.iron_ingot, 1);
 			} else if (k == 1) {
 				this.dropItem(Items.iron_ingot, 2);
 			}
 		}
 		
+	}
+	
+	public int getHeldItemDamage() {
+		return this.heldItemDamage;
+	}
+	
+	public void addToHeldItemDamage(int dmg) {
+		this.heldItemDamage = this.heldItemDamage + dmg;
+	}
+	
+	public void setHeldItemDamage(int dmg) {
+		this.heldItemDamage = dmg;
 	}
 
 
@@ -233,7 +249,7 @@ public class EntityEnslavedVillager extends EntityWolf {
             if (itemstack != null) {
             	if (itemstack.getItem() instanceof ItemWhip) {
             		player.swingItem();
-            		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 0.8F));        
+            		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (this.rand.nextFloat() * 0.4F + 0.8F));        
                     
             		// players can steal slaves with a whip from current owner
             		// must be owner to leash slave and get them to follow you
@@ -294,7 +310,7 @@ public class EntityEnslavedVillager extends EntityWolf {
             }  else if (itemstack == null) {
             	// if slave is holding an item and player interact with empty hand,
             	// then have slave drop their held item
-            	if (this.heldItem != null) {
+            	if (this.getEquipmentInSlot(0) != null) {
             		this.dropHeldItem();
             	}
             	
@@ -311,7 +327,7 @@ public class EntityEnslavedVillager extends EntityWolf {
             }
         } else if (itemstack != null && itemstack.getItem() instanceof ItemWhip) {
         	player.swingItem();
-    		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 0.8F));        
+    		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (this.rand.nextFloat() * 0.4F + 0.8F));        
             
             if (!this.worldObj.isRemote) {
                 if (this.rand.nextInt(3) == 0) {
@@ -344,13 +360,10 @@ public class EntityEnslavedVillager extends EntityWolf {
 //	Makes slave drop whatever their currently held item is
 	public void dropHeldItem() {
 		if (!this.worldObj.isRemote) {
-			this.dropItem(this.heldItem, 1);
-			this.heldItem = null;
+			ItemStack drop = new ItemStack(this.getHeldItem().getItem(), 2, (this.getHeldItemDamage()));
+			this.dropItem(drop.getItem(), 1);
 		}
-		
-		if (this.worldObj.isRemote) {
-			this.heldItem = null;
-		}
+		this.setCurrentItemOrArmor(0, (ItemStack) null);
 	}
 	
 
@@ -368,6 +381,9 @@ public class EntityEnslavedVillager extends EntityWolf {
 		if (this.action == 0) {
 			this.action = 6;
 			this.worldObj.setEntityState(this, (byte)4);
+
+		    // damage slave's tool
+		    this.damageHeldItem(5);
 		}
 	}
 	  
@@ -390,36 +406,37 @@ public class EntityEnslavedVillager extends EntityWolf {
 		// material of their given tool
 		
 		
-		if (this.heldItem != null) {
-			if (this.heldItem == Items.wooden_axe ||
-				this.heldItem == Items.wooden_hoe ||
-				this.heldItem == Items.wooden_sword ||
-				this.heldItem == Items.wooden_pickaxe ||
-				this.heldItem == Items.wooden_shovel) {
+		if (this.getEquipmentInSlot(0) != null) {
+			Item heldItem = this.getEquipmentInSlot(0).getItem();
+			if (heldItem == Items.wooden_axe ||
+			    heldItem == Items.wooden_hoe ||
+				heldItem == Items.wooden_sword ||
+				heldItem == Items.wooden_pickaxe ||
+				heldItem == Items.wooden_shovel) {
 						   
 				this.slaveStrength = 2;
 				
-			} else if (this.heldItem == Items.stone_axe ||
-					   this.heldItem == Items.stone_hoe ||
-					   this.heldItem == Items.stone_sword ||
-					   this.heldItem == Items.stone_pickaxe ||
-					   this.heldItem == Items.stone_shovel) {
+			} else if (heldItem == Items.stone_axe ||
+					   heldItem == Items.stone_hoe ||
+					   heldItem == Items.stone_sword ||
+					   heldItem == Items.stone_pickaxe ||
+					   heldItem == Items.stone_shovel) {
 				
 				this.slaveStrength = 4;
 				
-			} else if (this.heldItem == Items.iron_axe ||
-					   this.heldItem == Items.iron_hoe ||
-					   this.heldItem == Items.iron_sword ||
-					   this.heldItem == Items.iron_pickaxe ||
-					   this.heldItem == Items.iron_shovel) {
+			} else if (heldItem == Items.iron_axe ||
+					   heldItem == Items.iron_hoe ||
+					   heldItem == Items.iron_sword ||
+					   heldItem == Items.iron_pickaxe ||
+					   heldItem == Items.iron_shovel) {
 				
 				this.slaveStrength = 6;
 				
-			} else if (this.heldItem == Items.diamond_axe ||
-					   this.heldItem == Items.diamond_hoe ||
-					   this.heldItem == Items.diamond_sword ||
-					   this.heldItem == Items.diamond_pickaxe ||
-					   this.heldItem == Items.diamond_shovel) {				
+			} else if (heldItem == Items.diamond_axe ||
+					   heldItem == Items.diamond_hoe ||
+					   heldItem == Items.diamond_sword ||
+					   heldItem == Items.diamond_pickaxe ||
+					   heldItem == Items.diamond_shovel) {				
 				this.slaveStrength = 10;				
 			}
 		} else { 
@@ -430,48 +447,30 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 //	Returns an ItemStack of the slave's current held item
 	public ItemStack getHeldItem() {
-		if (this.getHeldItemType() == 0) {
-			return null;
-		} else {
-			Item newHeldItem = (Item)itemRegistry.getObjectById(this.getHeldItemType());
-			ItemStack heldStack = new ItemStack(newHeldItem);
-			return (ItemStack) heldStack;
-		}
+		return (ItemStack) this.getEquipmentInSlot(0);
 	}
-	
 	
 	
 //	Sets the slave's held item.  Automatically drops currently held item
 	public void setHeldItem(Item item) {
-		if (this.heldItem != null) {
+		if (this.getHeldItem() != null) {
 			this.dropHeldItem();
 		}
-		this.heldItem = item;
-		
-		this.dataWatcher.updateObject(HELD_ITEM_WATCHER, Integer.valueOf(item.itemRegistry.getIDForObject(item)));
+		this.setCurrentItemOrArmor(0, new ItemStack(item));
 	}
-	
-	
-	public int getHeldItemType() {
-//		return this.heldItem.itemRegistry.getIDForObject(this.heldItem);
-		return this.dataWatcher.getWatchableObjectInt(HELD_ITEM_WATCHER); 
-	}
+
 	
 	public void setHeldItemByType(int type) {
-		if (type == 0) {
-			this.heldItem = null;
-		} else {
-			Item newHeldItem = (Item)itemRegistry.getObjectById(type);
-			this.heldItem = newHeldItem;	
-		}
-		this.dataWatcher.updateObject(HELD_ITEM_WATCHER, Integer.valueOf(type));
+		Item newHeldItem = (Item)itemRegistry.getObjectById(type);
+		ItemStack heldStack = new ItemStack(newHeldItem);
+		this.setCurrentItemOrArmor(0, heldStack);
 	}
 	
 	public void setAIByHeldItem() {
-		if (this.heldItem != null) {
-			if (this.heldItem instanceof ItemAxe) {
+		if (this.getHeldItem() != null) {
+			if (this.getHeldItem().getItem() instanceof ItemAxe) {
 				this.setAILumberjack();
-			} else if (this.heldItem instanceof ItemHoe) {
+			} else if (this.getHeldItem().getItem() instanceof ItemHoe) {
 				this.setAIPicker();
 			}
 		} else {
@@ -479,23 +478,29 @@ public class EntityEnslavedVillager extends EntityWolf {
 		}
 	}
 	
-	public void entityInit() {
-		super.entityInit();
-		
+	public void damageHeldItem(int amount) {
+		ItemStack heldStack = this.getHeldItem();
+		heldStack.setItemDamage(heldStack.getItemDamage() + amount);
+		Enslave.log.info("Held item damaged " + heldStack.getItemDamage());
+		if (heldStack.getItemDamage() >= heldStack.getMaxDamage()) {
+			this.destroyHeldItem();
+		}
+	}
+	
+	public void destroyHeldItem() {
+		this.setHeldItemByType(0);
 	}
 	
 
 	@Override
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
-        compound.setInteger("HeldItem", this.getHeldItemType());
         compound.setInteger("TextureType", this.getTextureType());
     }
 
 	@Override
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
-        this.setHeldItemByType(compound.getInteger("HeldItem"));
         this.setTextureType(compound.getInteger("TextureType"));
     }
 	

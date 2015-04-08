@@ -165,10 +165,6 @@ public class AIHarvestLogs extends EntityAIBase {
     this.theWorld.playAuxSFX(2001, this.xx, this.yy, this.zz, Block.getIdFromBlock(this.block) + (this.blockMd << 12));
     BlockUtils.breakFurthestBlock(this.theWorld, this.xx, this.yy, this.zz, this.block, this.player);
     this.theSlave.startActionTimer();
-    
-    // damage slave's tool
-    this.theSlave.getHeldItem().damageItem(1, this.player);
-    
   }
   
   private Vec3 findLog()
