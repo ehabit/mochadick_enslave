@@ -16,7 +16,6 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import enslave.entity.EntityEnslavedVillager;
 import enslave.item.ItemShackles;
 import enslave.item.ItemWhip;
-import enslave.network.PacketDispatcher;
 import enslave.network.handler.EnslavedVillagerSyncHandler;
 
 

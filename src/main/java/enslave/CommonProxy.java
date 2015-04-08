@@ -6,7 +6,6 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import enslave.network.MessageToClient;
 import enslave.network.MessageToServer;
-import enslave.network.handler.MessageSyncEntityToClient;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class CommonProxy {

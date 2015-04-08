@@ -22,8 +22,6 @@ import java.util.Random;
 
 import enslave.Enslave;
 import enslave.entity.EntityEnslavedVillager;
-import enslave.network.handler.MessageSyncEntityToClient;
-import enslave.network.handler.MessageSyncEntityToServer;
 import net.minecraft.block.Block;
 import net.minecraft.block.IGrowable;
 import net.minecraft.enchantment.EnchantmentHelper;
