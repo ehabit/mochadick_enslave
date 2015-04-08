@@ -15,6 +15,7 @@ Thumbs.db
 /bin
 /eclipse/saves
 /eclipse/.metadata
+/eclipse/screenshots
 
 ## intellij
 /out
