@@ -26,25 +26,18 @@ public class ExtendedSlave implements IExtendedEntityProperties {
 
 	@Override
 	public void saveNBTData(NBTTagCompound compound) {
-		
 		NBTTagCompound properties = new NBTTagCompound();
 		
-		// We only have 2 variables currently; save them both to the new tag
-//		properties.setInteger("HeldItem", this.slave.getHeldItemType());
 		properties.setInteger("TextureType", this.slave.getTextureType());
 		
 		compound.setTag(EXT_PROP_NAME, properties);
-		
 	}
 
 
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
 		NBTTagCompound properties = (NBTTagCompound) compound.getTag(EXT_PROP_NAME);
-		// Get our data from the custom tag compound
-//		this.slave.setHeldItemByType(properties.getInteger("HeldItem"));
 		this.slave.setTextureType(properties.getInteger("TextureType"));
-		
 	}
 
 
