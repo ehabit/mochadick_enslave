@@ -69,7 +69,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 	private int gladiatorSkill;
 	
 	// Watchers need to sync client and server side for rendering purposes
-	private final int HELD_ITEM_WATCHER = 25;
 	private final int TEXTURE_TYPE_WATCHER = 26;
 	
 	
@@ -82,7 +81,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.getNavigator().setAvoidsWater(true);
 		this.FollowOwner();
 		
-		this.dataWatcher.addObject(HELD_ITEM_WATCHER, Integer.valueOf(0));
 		this.dataWatcher.addObject(TEXTURE_TYPE_WATCHER, Integer.valueOf(0));
 		
 		int randNum = this.rand.nextInt(2) + 1;
