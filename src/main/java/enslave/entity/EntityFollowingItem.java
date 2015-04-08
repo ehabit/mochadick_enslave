@@ -94,13 +94,6 @@ public class EntityFollowingItem extends EntitySpecialItem
         this.target = null;
         this.noClip = false;
       }
-//      if (this.worldObj.isRemote) {
-//        if (this.type != 10) {
-//          Thaumcraft.proxy.sparkle((float)this.prevPosX + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.125F, (float)this.prevPosY + this.yOffset + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.125F, (float)this.prevPosZ + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.125F, this.type);
-//        } else {
-//          Enslave.proxy.crucibleBubble(this.worldObj, (float)this.prevPosX + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.125F, (float)this.prevPosY + this.yOffset + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.125F, (float)this.prevPosZ + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.125F, 0.33F, 0.33F, 1.0F);
-//        }
-//      }
     }
     else
     {
