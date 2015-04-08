@@ -11,10 +11,14 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.FMLEventChannel;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import enslave.entity.EntityEnslavedVillager;
-import enslave.handler.EnslavedVillagerHandler;
 import enslave.item.ItemShackles;
 import enslave.item.ItemWhip;
+import enslave.network.PacketDispatcher;
+import enslave.network.handler.EnslavedVillagerSyncHandler;
+
 
 @Mod(modid = Enslave.MODID, name = Enslave.NAME, version = Enslave.VERSION)
 public class Enslave {
@@ -31,7 +35,7 @@ public class Enslave {
 	
 	@Instance(Enslave.MODID)
 	public static Enslave instance;
-    
+	   
     public static ItemShackles shackles;
     public static ItemWhip whip;
     
@@ -45,7 +49,7 @@ public class Enslave {
     	log.info("Registering entities");
     	EntityEnslavedVillager.mainRegistry();
     	
-    	MinecraftForge.EVENT_BUS.register(new EnslavedVillagerHandler());
+    	MinecraftForge.EVENT_BUS.register(new EnslavedVillagerSyncHandler());
     }
     
     @EventHandler

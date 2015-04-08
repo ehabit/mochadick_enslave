@@ -2,6 +2,7 @@ package enslave.entity;
 
 import java.util.Random;
 
+import lib.Utils;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import enslave.Enslave;
@@ -36,9 +37,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.RegistryNamespaced;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IExtendedEntityProperties;
 
 
 public class EntityEnslavedVillager extends EntityWolf {
+	
 	public static final RegistryNamespaced itemRegistry = GameData.getItemRegistry();
 	public Integer textureType;
 	protected static Random itemRand = new Random();
@@ -49,9 +52,6 @@ public class EntityEnslavedVillager extends EntityWolf {
     public static int slaveIgnoreDelay = 10000;
     private int slaveStrength = 1;
     
-    private final int TEXTURE_TYPE_WATCHER = 30;
-    private final int HELD_ITEM_WATCHER = 31;
-    
 	
 	public int action = 0;
 	public int leftArm = 0;
@@ -60,17 +60,40 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	private Item heldItem;
 	
+	
+	private final int HELD_ITEM_WATCHER = 28;
+	private final int TEXTURE_TYPE_WATCHER = 29;
+	
 	public EntityEnslavedVillager(World world) {
 		super(world);
+		
 		this.setSize(modelWidth, modelHeight);
 		
 		this.getNavigator().setAvoidsWater(true);
 		this.FollowOwner();
 		
+		this.dataWatcher.addObject(HELD_ITEM_WATCHER, Integer.valueOf(0));
+		this.dataWatcher.addObject(TEXTURE_TYPE_WATCHER, Integer.valueOf(0));
+		
 		int randNum = itemRand.nextInt(2) + 1;
 		this.textureType = randNum;
+		this.textureType = this.getTextureType();
 		
-
+		
+		this.heldItem = null;
+		ItemStack heldItemStack = this.getHeldItem();
+		if (heldItemStack != null) {
+			this.heldItem = heldItemStack.getItem();
+		}
+	}
+	
+	public int getTextureType() {
+		return this.dataWatcher.getWatchableObjectInt(TEXTURE_TYPE_WATCHER); 
+	}
+	
+	public void setTextureType(int type) {
+		this.textureType = type;
+		this.dataWatcher.updateObject(TEXTURE_TYPE_WATCHER, Integer.valueOf(type));
 	}
 	
 
@@ -219,6 +242,7 @@ public class EntityEnslavedVillager extends EntityWolf {
                         if (this.rand.nextInt(3) == 0) {
                         	this.func_152115_b(player.getUniqueID().toString());
                         	this.playTameEffect(true);
+                        	this.worldObj.setEntityState(this, (byte)7);
                         }
                     }
             		
@@ -329,26 +353,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 		}
 	}
 	
-//	Returns an ItemStack of the slave's current held item
-	public ItemStack getHeldItem() {
-		if (heldItem == null) {
-			return null;
-		} else {
-			ItemStack heldStack = new ItemStack(heldItem);
-			return (ItemStack) heldStack;
-		}
-	}
-	
-	
-	
-//	Sets the slave's held item.  Automatically drops currently held item
-	public void setHeldItem(Item item) {
-		if (this.heldItem != null) {
-			this.dropHeldItem();
-		}
-		this.heldItem = item;
-	}
-	
+
 	public float getRange() {
 	    float dmod = 16 + 10 * 4;
 	    dmod += Math.max(dmod * 0.2F, 2.0F);
@@ -383,6 +388,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 	public int getSlaveStrength() {
 		// slave stength (mining speed) will be based on the 
 		// material of their given tool
+		
+		
 		if (this.heldItem != null) {
 			if (this.heldItem == Items.wooden_axe ||
 				this.heldItem == Items.wooden_hoe ||
@@ -412,8 +419,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 					   this.heldItem == Items.diamond_hoe ||
 					   this.heldItem == Items.diamond_sword ||
 					   this.heldItem == Items.diamond_pickaxe ||
-					   this.heldItem == Items.diamond_shovel) {
-				
+					   this.heldItem == Items.diamond_shovel) {				
 				this.slaveStrength = 10;				
 			}
 		} else { 
@@ -422,18 +428,43 @@ public class EntityEnslavedVillager extends EntityWolf {
 		return this.slaveStrength;
 	}
 	
+//	Returns an ItemStack of the slave's current held item
+	public ItemStack getHeldItem() {
+		if (this.getHeldItemType() == 0) {
+			return null;
+		} else {
+			Item newHeldItem = (Item)itemRegistry.getObjectById(this.getHeldItemType());
+			ItemStack heldStack = new ItemStack(newHeldItem);
+			return (ItemStack) heldStack;
+		}
+	}
+	
+	
+	
+//	Sets the slave's held item.  Automatically drops currently held item
+	public void setHeldItem(Item item) {
+		if (this.heldItem != null) {
+			this.dropHeldItem();
+		}
+		this.heldItem = item;
+		
+		this.dataWatcher.updateObject(HELD_ITEM_WATCHER, Integer.valueOf(item.itemRegistry.getIDForObject(item)));
+	}
+	
+	
 	public int getHeldItemType() {
-		return this.heldItem.getIdFromItem(this.heldItem);
+//		return this.heldItem.itemRegistry.getIDForObject(this.heldItem);
+		return this.dataWatcher.getWatchableObjectInt(HELD_ITEM_WATCHER); 
 	}
 	
 	public void setHeldItemByType(int type) {
 		if (type == 0) {
 			this.heldItem = null;
 		} else {
-			
 			Item newHeldItem = (Item)itemRegistry.getObjectById(type);
-			this.heldItem = newHeldItem;
+			this.heldItem = newHeldItem;	
 		}
+		this.dataWatcher.updateObject(HELD_ITEM_WATCHER, Integer.valueOf(type));
 	}
 	
 	public void setAIByHeldItem() {
@@ -448,33 +479,24 @@ public class EntityEnslavedVillager extends EntityWolf {
 		}
 	}
 	
+	public void entityInit() {
+		super.entityInit();
+		
+	}
 	
-	@Override
-	protected void entityInit() {
-        super.entityInit();        
-    }
 
 	@Override
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
-//        compound.setInteger("TextureType", this.textureType);
-        
-//        this.dataWatcher.updateObject(TEXTURE_TYPE_WATCHER, this.textureType);
-        
-        
-//        compound.setInteger("HeldItem", this.getHeldItemType());
-//        this.dataWatcher.updateObject(HELD_ITEM_WATCHER, properties.getInteger("HeldItem"));
+        compound.setInteger("HeldItem", this.getHeldItemType());
+        compound.setInteger("TextureType", this.getTextureType());
     }
 
 	@Override
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
-        
-        // Retrieve texture type from dataWatcher
-//        this.textureType = this.dataWatcher.getWatchableObjectInt(TEXTURE_TYPE_WATCHER);
-        
-//        this.setHeldItemByType(compound.getInteger("HeldItem"));
+        this.setHeldItemByType(compound.getInteger("HeldItem"));
+        this.setTextureType(compound.getInteger("TextureType"));
     }
-	
 	
 }

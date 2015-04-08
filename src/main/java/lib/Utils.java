@@ -7,6 +7,7 @@ import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,9 +19,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
+import enslave.Enslave;
+import enslave.entity.EntityEnslavedVillager;
+import enslave.network.handler.MessageSyncEntityToClient;
+import enslave.network.handler.MessageSyncEntityToServer;
 import net.minecraft.block.Block;
 import net.minecraft.block.IGrowable;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -99,5 +106,39 @@ public class Utils
   {
     return Math.sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
   }
+  
+  
+  public static void sendEntitySyncPacketToClient(EntityEnslavedVillager parEntity) 
+  {
+	  EntityEnslavedVillager theEntity = (EntityEnslavedVillager)parEntity;
+      if (!theEntity.worldObj.isRemote)
+      {
+      	// DEBUG
+      	System.out.println("sendEntitySyncPacket from server");
+//          Enslave.network.sendToAll(new MessageSyncEntityToClient(theEntity.getEntityId(), parEntity.getSyncDataCompound()));           
+      }
+  }
+
+  public static void sendEntitySyncPacketToServer(EntityEnslavedVillager parEntity) 
+  {
+	  EntityEnslavedVillager theEntity = (EntityEnslavedVillager)parEntity;
+      if (theEntity.worldObj.isRemote)
+      {
+      	// DEBUG
+      	System.out.println("sendEntitySyncPacket from client");
+//          Enslave.network.sendToServer(new MessageSyncEntityToServer(theEntity.getEntityId(), parEntity.getSyncDataCompound()));           
+      }
+  }
+  
+  public static Entity getEntityByID(int entityID, World world) {         
+	    for(Object o: world.getLoadedEntityList()) {                        
+	        if(((Entity)o).getEntityId() == entityID) {   
+	        	// DEBUG
+	            // System.out.println("Found the entity");                                
+	            return ((Entity)o);                        
+	        }                
+	    }                
+	    return null;        
+	}
  
 }

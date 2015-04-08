@@ -1,46 +1,63 @@
-[23:35:17] [main/INFO]: Setting user: Player317
-[23:35:19] [Client thread/INFO]: LWJGL Version: 2.9.1
-[23:35:20] [Client thread/ERROR]: Couldn't initialize twitch stream
-[23:35:28] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
-[23:35:29] [Sound Library Loader/INFO]: Sound engine started
-[23:35:32] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
-[23:35:32] [Client thread/INFO]: Created: 256x256 textures/items-atlas
-[23:35:32] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
-[23:35:33] [Client thread/INFO]: Created: 256x256 textures/items-atlas
-[23:35:33] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
-[23:35:34] [Sound Library Loader/INFO]: Sound engine started
-[23:36:27] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
-[23:36:27] [Server thread/INFO]: Generating keypair
-[23:36:28] [Server thread/INFO]: Preparing start region for level 0
-[23:36:29] [Server thread/INFO]: Preparing spawn area: 8%
-[23:36:31] [Server thread/INFO]: Changing view distance to 4, from 10
-[23:36:31] [Server thread/INFO]: Player317[local:E:ca6657a0] logged in with entity id 181 at (-250.27145001486375, 68.0, 7.476403216642809)
-[23:36:31] [Server thread/INFO]: Player317 joined the game
-[23:36:35] [Server thread/WARN]: Can't keep up! Did the system time change, or is the server overloaded? Running 2807ms behind, skipping 56 tick(s)
-[23:36:41] [Server thread/INFO]: Saving and pausing game...
-[23:36:41] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
-[23:36:41] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
-[23:36:41] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
-[23:36:42] [Server thread/INFO]: Stopping server
-[23:36:42] [Server thread/INFO]: Saving players
-[23:36:42] [Server thread/INFO]: Saving worlds
-[23:36:42] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
-[23:36:42] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
-[23:36:42] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
-[23:36:46] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
-[23:36:46] [Server thread/INFO]: Generating keypair
-[23:36:46] [Server thread/INFO]: Preparing start region for level 0
-[23:36:48] [Server thread/INFO]: Changing view distance to 4, from 10
-[23:36:48] [Server thread/INFO]: Player317[local:E:56ee8f95] logged in with entity id 501 at (-250.27145001486375, 68.0, 7.476403216642809)
-[23:36:48] [Server thread/INFO]: Player317 joined the game
-[23:36:50] [Server thread/INFO]: Saving and pausing game...
-[23:36:50] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
-[23:36:50] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
-[23:36:50] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
-[23:36:51] [Server thread/INFO]: Stopping server
-[23:36:51] [Server thread/INFO]: Saving players
-[23:36:51] [Server thread/INFO]: Saving worlds
-[23:36:51] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
-[23:36:51] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
-[23:36:51] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
-[23:36:53] [Client thread/INFO]: Stopping!
+[02:47:46] [main/INFO]: Setting user: Player976
+[02:47:49] [Client thread/INFO]: LWJGL Version: 2.9.1
+[02:47:50] [Client thread/ERROR]: Couldn't initialize twitch stream
+[02:47:59] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
+[02:48:01] [Sound Library Loader/INFO]: Sound engine started
+[02:48:03] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
+[02:48:03] [Client thread/INFO]: Created: 256x256 textures/items-atlas
+[02:48:03] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
+[02:48:04] [Client thread/INFO]: Created: 256x256 textures/items-atlas
+[02:48:05] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
+[02:48:05] [Sound Library Loader/INFO]: Sound engine started
+[02:48:11] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
+[02:48:11] [Server thread/INFO]: Generating keypair
+[02:48:12] [Server thread/INFO]: Preparing start region for level 0
+[02:48:13] [Server thread/INFO]: Preparing spawn area: 5%
+[02:48:14] [Server thread/INFO]: Preparing spawn area: 78%
+[02:48:15] [Server thread/INFO]: Changing view distance to 4, from 10
+[02:48:16] [Server thread/INFO]: Player976[local:E:c6a034fc] logged in with entity id 201 at (-305.8334894300539, 69.04207694111255, -8.378425219494423)
+[02:48:16] [Server thread/INFO]: Player976 joined the game
+[02:48:18] [Server thread/WARN]: Can't keep up! Did the system time change, or is the server overloaded? Running 2962ms behind, skipping 59 tick(s)
+[02:48:28] [Server thread/INFO]: Saving and pausing game...
+[02:48:28] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[02:48:28] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[02:48:28] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[02:48:28] [Server thread/INFO]: Stopping server
+[02:48:28] [Server thread/INFO]: Saving players
+[02:48:28] [Server thread/INFO]: Saving worlds
+[02:48:28] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[02:48:28] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[02:48:28] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[02:48:31] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
+[02:48:31] [Server thread/INFO]: Generating keypair
+[02:48:31] [Server thread/INFO]: Preparing start region for level 0
+[02:48:32] [Server thread/INFO]: Changing view distance to 4, from 10
+[02:48:32] [Server thread/INFO]: Player976[local:E:1bdd5813] logged in with entity id 2415 at (-305.8334894300539, 69.04207694111255, -8.378425219494423)
+[02:48:32] [Server thread/INFO]: Player976 joined the game
+[02:48:33] [Server thread/INFO]: Saving and pausing game...
+[02:48:33] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[02:48:34] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[02:48:34] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[02:48:34] [Server thread/INFO]: Stopping server
+[02:48:34] [Server thread/INFO]: Saving players
+[02:48:34] [Server thread/INFO]: Saving worlds
+[02:48:34] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[02:48:34] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[02:48:34] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[02:48:37] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
+[02:48:37] [Server thread/INFO]: Generating keypair
+[02:48:37] [Server thread/INFO]: Preparing start region for level 0
+[02:48:38] [Server thread/INFO]: Changing view distance to 4, from 10
+[02:48:38] [Server thread/INFO]: Player976[local:E:f134f158] logged in with entity id 2955 at (-305.8334894300539, 69.04207694111255, -8.378425219494423)
+[02:48:38] [Server thread/INFO]: Player976 joined the game
+[02:48:39] [Server thread/INFO]: Saving and pausing game...
+[02:48:39] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[02:48:39] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[02:48:39] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[02:48:40] [Server thread/INFO]: Stopping server
+[02:48:40] [Server thread/INFO]: Saving players
+[02:48:40] [Server thread/INFO]: Saving worlds
+[02:48:40] [Server thread/INFO]: Saving chunks for level 'Enslave'/Overworld
+[02:48:40] [Server thread/INFO]: Saving chunks for level 'Enslave'/Nether
+[02:48:40] [Server thread/INFO]: Saving chunks for level 'Enslave'/The End
+[02:48:41] [Client thread/INFO]: Stopping!
