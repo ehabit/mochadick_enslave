@@ -8,6 +8,7 @@ import cpw.mods.fml.common.registry.GameData;
 import enslave.Enslave;
 import enslave.entity.ai.AIHarvestCrops;
 import enslave.entity.ai.AIHarvestLogs;
+import enslave.entity.ai.AIOpenDoor;
 import enslave.entity.ai.AIReturnHome;
 import enslave.item.ItemWhip;
 import net.minecraft.block.Block;
@@ -87,6 +88,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.textureType = randNum;
 		this.textureType = this.getTextureType();
 		
+		this.getSlaveStrength();
 		this.setAIByHeldItem();
 	}
 	
@@ -123,10 +125,10 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	protected void setAIBase() {
         this.tasks.addTask(1, new EntityAISwimming(this));
-        
+        this.tasks.addTask(1, new AIOpenDoor(this, true));
         this.tasks.addTask(3, this.aiSit);
-        this.tasks.addTask(4, new EntityAILeapAtTarget(this, 0.4F));
-        this.tasks.addTask(5, new EntityAIAttackOnCollide(this, 1.0D, true));
+//        this.tasks.addTask(4, new EntityAILeapAtTarget(this, 0.4F));
+//        this.tasks.addTask(5, new EntityAIAttackOnCollide(this, 1.0D, true));
         this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(7, new EntityAIMate(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWander(this, 1.0D));
