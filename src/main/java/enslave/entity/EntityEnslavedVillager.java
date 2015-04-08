@@ -171,8 +171,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 		// TODO Add Gladiator AI
 		this.tasks.addTask(1, new EntityAILeapAtTarget(this, 0.4F));
 	    this.tasks.addTask(2, new EntityAIAttackOnCollide(this, 1.0D, true));
-	    this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntitySheep.class, 200, false));
-		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityZombie.class, 200, false));
+	    this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityZombie.class, 200, false));
 		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntitySkeleton.class, 200, false));
 		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityCreeper.class, 200, false));
 		
