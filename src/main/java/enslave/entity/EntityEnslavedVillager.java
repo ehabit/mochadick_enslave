@@ -1,5 +1,6 @@
 package enslave.entity;
 
+
 import java.util.Random;
 
 import lib.Utils;
@@ -23,8 +24,15 @@ import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMate;
 import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAITarget;
+import net.minecraft.entity.ai.EntityAITargetNonTamed;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -39,7 +47,6 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.RegistryNamespaced;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
-
 
 public class EntityEnslavedVillager extends EntityWolf {
 	
@@ -63,10 +70,13 @@ public class EntityEnslavedVillager extends EntityWolf {
 	private int heldItemDamage;
 	
 	// revolt increases the longer a slave is held without supervision
+	private int lashesTaken;
+	private int hungerLevel;
+	private int thirstLevel;
 	private int revoltLevel;
 	
 	private int lumberjackSkill;
-	private int pickerSkill;
+	private int farmerSkill;
 	private int gladiatorSkill;
 	
 	// Watchers need to sync client and server side for rendering purposes
@@ -90,6 +100,9 @@ public class EntityEnslavedVillager extends EntityWolf {
 		
 		this.getSlaveStrength();
 		this.setAIByHeldItem();
+		
+		this.lashesTaken = 0;
+		this.lashesTaken = this.getLashesTaken();
 	}
 	
 	public int getTextureType() {
@@ -99,8 +112,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 	public void setTextureType(int type) {
 		this.textureType = type;
 		this.dataWatcher.updateObject(TEXTURE_TYPE_WATCHER, Integer.valueOf(type));
-	}
-	
+	}	
 
 	public static void mainRegistry(Class entityClass, String name) {
 		int entityID = EntityRegistry.findGlobalUniqueEntityId();
@@ -127,8 +139,6 @@ public class EntityEnslavedVillager extends EntityWolf {
         this.tasks.addTask(1, new EntityAISwimming(this));
         this.tasks.addTask(1, new AIOpenDoor(this, true));
         this.tasks.addTask(3, this.aiSit);
-//        this.tasks.addTask(4, new EntityAILeapAtTarget(this, 0.4F));
-//        this.tasks.addTask(5, new EntityAIAttackOnCollide(this, 1.0D, true));
         this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(7, new EntityAIMate(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWander(this, 1.0D));
@@ -145,7 +155,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.aiSit.setSitting(false);	
 	}
 	
-	protected void setAIPicker() {
+	protected void setAIFarmer() {
 		this.clearAITasks();
 		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, (int) this.getRange());
 		this.tasks.addTask(1, new AIHarvestCrops(this));
@@ -159,10 +169,20 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, (int) this.getRange());
 		
 		// TODO Add Gladiator AI
+		this.tasks.addTask(1, new EntityAILeapAtTarget(this, 0.4F));
+	    this.tasks.addTask(2, new EntityAIAttackOnCollide(this, 1.0D, true));
+	    this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntitySheep.class, 200, false));
+		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityZombie.class, 200, false));
+		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntitySkeleton.class, 200, false));
+		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityCreeper.class, 200, false));
 		
 		this.tasks.addTask(2, new AIReturnHome(this));
 		this.setAIBase();
 		this.aiSit.setSitting(false);	
+	}
+	
+	protected void setAIRevolting() {
+		this.clearAITasks();
 	}
 	
 	protected void FollowOwner () {
@@ -241,6 +261,25 @@ public class EntityEnslavedVillager extends EntityWolf {
 		 
 	}
 	
+	public void lashSlave(EntityPlayer player) {
+		this.lashesTaken++;
+		
+		player.swingItem();
+		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (this.rand.nextFloat() * 0.4F + 0.8F));        
+        
+		if (!this.worldObj.isRemote) {
+			Enslave.log.info("Slave has been lashed " + this.lashesTaken + " times.");
+		}
+	}
+	
+	public int getLashesTaken() {
+		return this.lashesTaken;
+	}
+	
+	public void setLashesTaken(int lashes) {
+		this.lashesTaken = lashes;
+	}
+	
 	@Override
 	public boolean interact(EntityPlayer player) {
         ItemStack itemstack = player.inventory.getCurrentItem();
@@ -248,9 +287,8 @@ public class EntityEnslavedVillager extends EntityWolf {
         if (this.isTamed()) {
             if (itemstack != null) {
             	if (itemstack.getItem() instanceof ItemWhip) {
-            		player.swingItem();
-            		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (this.rand.nextFloat() * 0.4F + 0.8F));        
-                    
+            		this.lashSlave(player);
+            		
             		// players can steal slaves with a whip from current owner
             		// must be owner to leash slave and get them to follow you
                     this.setTarget((Entity)player);
@@ -279,7 +317,7 @@ public class EntityEnslavedVillager extends EntityWolf {
                         --itemstack.stackSize;
                     }
             		
-            		this.setAIPicker();
+            		this.setAIFarmer();
             		
             	} else if (itemstack.getItem() instanceof ItemSword) {
             		// if player interacts with sword, give sword to slave
@@ -326,9 +364,8 @@ public class EntityEnslavedVillager extends EntityWolf {
                 this.setAttackTarget((EntityLivingBase)null);
             }
         } else if (itemstack != null && itemstack.getItem() instanceof ItemWhip) {
-        	player.swingItem();
-    		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (this.rand.nextFloat() * 0.4F + 0.8F));        
-            
+        	this.lashSlave(player);
+        	
             if (!this.worldObj.isRemote) {
                 if (this.rand.nextInt(3) == 0) {
                     this.setTamed(true);
@@ -471,7 +508,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 			if (this.getHeldItem().getItem() instanceof ItemAxe) {
 				this.setAILumberjack();
 			} else if (this.getHeldItem().getItem() instanceof ItemHoe) {
-				this.setAIPicker();
+				this.setAIFarmer();
 			}
 		} else {
 			this.setAIBase();
@@ -496,12 +533,14 @@ public class EntityEnslavedVillager extends EntityWolf {
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
         compound.setInteger("TextureType", this.getTextureType());
+        compound.setInteger("LashesTaken", this.getLashesTaken());
     }
 
 	@Override
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
         this.setTextureType(compound.getInteger("TextureType"));
+        this.setLashesTaken(compound.getInteger("LashesTaken"));
     }
 	
 }
