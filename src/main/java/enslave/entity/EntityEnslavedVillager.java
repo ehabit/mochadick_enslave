@@ -45,6 +45,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.RegistryNamespaced;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
@@ -75,6 +76,9 @@ public class EntityEnslavedVillager extends EntityWolf {
 	private int hungerLevel;
 	private int thirstLevel;
 	private int revoltLevel;
+	private boolean isRevolting;
+	
+	private int thoughtTick;
 	
 	private int lumberjackSkill;
 	private int farmerSkill;
@@ -104,6 +108,19 @@ public class EntityEnslavedVillager extends EntityWolf {
 		
 		this.lashesTaken = 0;
 		this.lashesTaken = this.getLashesTaken();
+		
+		this.lumberjackSkill = 0;
+		this.lumberjackSkill = this.getLumberjackSkill();
+		
+		this.farmerSkill = 0;
+		this.farmerSkill = this.getFarmerSkill();
+		
+		this.gladiatorSkill = 0;
+		this.gladiatorSkill = this.getGladiatorSkill();
+		
+		this.revoltLevel = 0;
+		
+		this.thoughtTick = 0;
 	}
 	
 	public int getTextureType() {
@@ -183,8 +200,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	protected void setAIRevolting() {
 		this.clearAITasks();
-		this.setTamed(false);
-		this.setAngry(true);
 		this.tasks.addTask(1, new EntityAILeapAtTarget(this, 0.4F));
 	    this.tasks.addTask(2, new EntityAIAttackOnCollide(this, 1.0D, true));
 	    this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 200, false));
@@ -269,7 +284,31 @@ public class EntityEnslavedVillager extends EntityWolf {
 	public int getGladiatorSkill() {
 		return this.gladiatorSkill;
 	}
+	
+	public void setRevoltLevel(int amount) {
+		this.revoltLevel = amount;
+	}
+	
+	public int getRevoltLevel() {
+		return this.revoltLevel;
+	}
+	
+	public boolean shouldRevolt() {
+		if (this.getRevoltLevel() >= 100) {
+			return true;
+		}
+		
+		return false;
+	}
 
+	
+	public void revolt() {
+		this.isRevolting = true;
+		this.setTamed(false);
+		this.setAngry(true);
+		
+		this.setAIRevolting();
+	}
 
 	public void increaseSkillBasedOnHeldItem(int amount) {
 		if (this.getHeldItem() != null) {
@@ -301,10 +340,15 @@ public class EntityEnslavedVillager extends EntityWolf {
 		 super.onUpdate();
 		 
 		 
+		 
+		 
+		 
 	}
 	
 	public void lashSlave(EntityPlayer player) {
 		this.lashesTaken++;
+		this.attackEntityFrom(DamageSource.generic, 1);
+		this.setRevoltLevel(this.getRevoltLevel() + 1);
 		
 		player.swingItem();
 		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (this.rand.nextFloat() * 0.4F + 0.8F));        
@@ -373,7 +417,7 @@ public class EntityEnslavedVillager extends EntityWolf {
             		// feed slave
                     ItemFood itemfood = (ItemFood)itemstack.getItem();
 
-                    if (itemfood.isWolfsFavoriteMeat() && this.dataWatcher.getWatchableObjectFloat(18) < 20.0F) {
+                    if (this.dataWatcher.getWatchableObjectFloat(18) < 20.0F) {
                         if (!player.capabilities.isCreativeMode) {
                             --itemstack.stackSize;
                         }
@@ -462,7 +506,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 			this.worldObj.setEntityState(this, (byte)4);
 
 		    // damage slave's tool
-		    this.damageHeldItem(5);
+//		    this.damageHeldItem(5);
+			this.increaseSkillBasedOnHeldItem(1);
 		}
 	}
 	  
