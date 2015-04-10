@@ -1,5 +1,59 @@
 Changelog:
-Build 1352:
+Build 1358:
+	me:
+		Fix FluidRegsitry.registerFluid
+		
+		FluidRegistry:
+		```java
+		    static BiMap<String, Fluid> fluids = HashBiMap.create();
+		    static BiMap<Fluid, Integer> fluidIDs = HashBiMap.create();
+		...
+		    public static boolean registerFluid(Fluid fluid)
+		    {
+		        if (fluidIDs.containsKey(fluid.getName()))
+		            ^^^^^^^
+		```
+		There is definitely should be fluids instead fluidIDs. This mistake broke many mods.
+
+Build 1.8-11.14.1.1357:
+	LexManos:
+		Updated FML:
+		MinecraftForge/FML@c8160311d580f2dfccdf796a5243e16844787cb6 Stop IllegalFormatConversionException thrown if @Mod has flagged client-only or server-only
+		MinecraftForge/FML@9a894952afb526436649f608f7af5992b97f044c Merge pull request #627 from GotoLink/patch-1
+		MinecraftForge/FML@40faac64520d1a197f08eaa9a0f850e7df43359a Remove J7 only constructor in EnhancedRuntimeException, J6 compiling compatibility restored.
+
+Build 1.7.10-10.13.3.1356-1.7.10:
+	LexManos: MinecraftForge/FML@31cf2a9cab6d1977d31436220d9612eaa13d4e0f Remove J7 only constructor in EnhancedRuntimeException, J6 compiling compatibility restored.
+	LexManos: Restore binary compatibility issues in FluidRegistry caused by recent changes.
+
+Build 1.7.10-10.13.3.1355-1.7.10:
+	cpw:
+		Removed fluidID from ItemStack.
+		
+		This fixes a rather huge issue where FluidStacks on the client could be desynced if a modder was unaware of it.
+		
+		This is a breaking change but can be mitigated with a transformer to the getter getFluidID().
+		
+		Signed-off-by: King Lemming <kinglemming@gmail.com>
+	cpw: Add in a fluidid transformer
+	cpw: Fix formatting
+	cpw:
+		Allow for duplicate Fluid Blocks. It's annoying to be sure but just as with the OreDictionary, we'll have to handle it.
+		
+		Signed-off-by: King Lemming <kinglemming@gmail.com>
+	cpw:
+		You shouldn't be creating FluidStacks from unregistered Fluids. Warn clearly on failed registrations, and make a useful log message for failed fluidstack
+		creations. Should help a lot with tracking down broken mods that are doing this wrongly.
+
+Build 1.8-11.14.1.1354:
+	ohai.iChun: Readded but deprecated the old RenderPlayerEvent that were deleted. Sorry, Lex.
+
+Build 1.8-11.14.1.1353:
+	ohai.iChun:
+		Reimplement RenderPlayerEvent that was removed in the port to 1.8 from 1.7.10.
+		RenderPlayerEvent.Specials was removed because the special effects are done in the LayerRenderer now.
+
+Build 1.7.10-10.13.2.1352-1.7.10:
 	cpw:
 		Forge really should have always supported the concept of an "exact spawn". Individual world providers can still
 		change this behaviour of course, but for default maps it makes sense to support it as a config option.

@@ -31,6 +31,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityWolf;
@@ -173,8 +174,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 	    this.tasks.addTask(2, new EntityAIAttackOnCollide(this, 1.0D, true));
 	    this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityZombie.class, 200, false));
 		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntitySkeleton.class, 200, false));
-		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityCreeper.class, 200, false));
-		
+		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntitySpider.class, 200, false));
+		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityCreeper.class, 200, false));	
 		this.tasks.addTask(2, new AIReturnHome(this));
 		this.setAIBase();
 		this.aiSit.setSitting(false);	
@@ -182,6 +183,12 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	protected void setAIRevolting() {
 		this.clearAITasks();
+		this.setTamed(false);
+		this.setAngry(true);
+		this.tasks.addTask(1, new EntityAILeapAtTarget(this, 0.4F));
+	    this.tasks.addTask(2, new EntityAIAttackOnCollide(this, 1.0D, true));
+	    this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 200, false));
+	    this.aiSit.setSitting(false);
 	}
 	
 	protected void FollowOwner () {
@@ -238,8 +245,44 @@ public class EntityEnslavedVillager extends EntityWolf {
 	public void setHeldItemDamage(int dmg) {
 		this.heldItemDamage = dmg;
 	}
+	
+	public void setLumberjackSkill(int amount) {
+		this.lumberjackSkill = amount;
+	}
+	
+	public int getLumberjackSkill() {
+		return this.lumberjackSkill;
+	}
+	
+	public void setFarmerSkill(int amount) {
+		this.farmerSkill = amount;
+	}
+	
+	public int getFarmerSkill() {
+		return this.farmerSkill;
+	}
+	
+	public void setGladiatorSkill(int amount) {
+		this.gladiatorSkill = amount;
+	}
+	
+	public int getGladiatorSkill() {
+		return this.gladiatorSkill;
+	}
 
 
+	public void increaseSkillBasedOnHeldItem(int amount) {
+		if (this.getHeldItem() != null) {
+			if (this.getHeldItem().getItem() instanceof ItemAxe) {
+				this.setLumberjackSkill(this.getLumberjackSkill() + amount);
+			} else if (this.getHeldItem().getItem() instanceof ItemHoe) {
+				this.setFarmerSkill(this.getFarmerSkill() + amount);
+			} else if (this.getHeldItem().getItem() instanceof ItemSword) {
+				this.setGladiatorSkill(this.getGladiatorSkill() + amount);
+			}
+		}
+	}
+	
 	public static boolean spawnEnslavedVillager(World var0, double var2, double var4, double var6) {
         Object var8;
 
