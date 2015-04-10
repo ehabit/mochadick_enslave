@@ -651,6 +651,9 @@ public class EntityEnslavedVillager extends EntityWolf {
 			
 		} else { 
 			this.slaveStrength = 1;
+			
+			// grant slave a general experience bonus based on their skills
+			this.slaveStrength = this.slaveStrength + (((this.getGladiatorSkill()/100) + (this.getFarmerSkill()/100) + (this.getLumberjackSkill()/100))/10);
 		}
 		return this.slaveStrength;
 	}
