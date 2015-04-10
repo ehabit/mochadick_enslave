@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIBeg;
@@ -38,6 +39,7 @@ import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemHoe;
@@ -119,6 +121,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.gladiatorSkill = this.getGladiatorSkill();
 		
 		this.revoltLevel = 0;
+		this.hungerLevel = 0;
+		this.thirstLevel = 0;
 		
 		this.thoughtTick = 0;
 	}
@@ -309,6 +313,23 @@ public class EntityEnslavedVillager extends EntityWolf {
 		
 		this.setAIRevolting();
 	}
+	
+	
+	public int getHungerLevel() {
+		return this.hungerLevel;
+	}
+	
+	public void setHungerLevel(int amount) {
+		this.hungerLevel = amount;
+	}
+	
+	public int getThirstLevel() {
+		return this.thirstLevel;
+	}
+	
+	public void setThirstLevel(int amount) {
+		this.thirstLevel = amount;
+	}
 
 	public void increaseSkillBasedOnHeldItem(int amount) {
 		if (this.getHeldItem() != null) {
@@ -335,12 +356,40 @@ public class EntityEnslavedVillager extends EntityWolf {
         return var8 != null;
     }
 	
+	public boolean isSupervised() {
+		// Get Owner
+		EntityPlayer owner = (EntityPlayer) this.getOwner();
+				 
+		if (owner != null) {
+				 // If within FOV and can be seen, stop movement
+				 if(this.canEntityBeSeen(owner)) {
+					 // owner is watching	
+					 Enslave.log.info("Owner is watching!");
+					 return true;
+				 } else {
+					 Enslave.log.info("Owner is gone, time to dream of freedom!");
+					 return false;
+					 
+				 }
+		}
+		return false;
+	}
+	
 	@Override
 	public void onUpdate() {
 		 super.onUpdate();
 		 
-		 
-		 
+		 if (this.thoughtTick >= 100) {
+			 if (!this.isSupervised()) {
+				 this.setRevoltLevel(this.getRevoltLevel() + 3);
+			     Enslave.log.info("RevoltLevel: " + this.getRevoltLevel());
+			 }
+			 
+			 this.thoughtTick = 0;
+		 } else {
+			 this.thoughtTick++;
+		 }
+		
 		 
 		 
 	}
@@ -423,12 +472,18 @@ public class EntityEnslavedVillager extends EntityWolf {
                         }
 
                         this.heal((float)itemfood.func_150905_g(itemstack));
-
+                        
+                        this.setHungerLevel(this.getHungerLevel() - itemfood.func_150905_g(itemstack));
+                        this.setRevoltLevel(this.getRevoltLevel() - itemfood.func_150905_g(itemstack));
+                        
+                        
                         if (itemstack.stackSize <= 0) {
                             player.inventory.setInventorySlotContents(player.inventory.currentItem, (ItemStack)null);
                         }
 
                         return true;
+                    } else if (itemstack.getItem() instanceof ItemArmor) {
+                    	// equip armor, drop current armor in slot if equipped
                     }
                 } 
             }  else if (itemstack == null) {
@@ -479,6 +534,16 @@ public class EntityEnslavedVillager extends EntityWolf {
 	public float getAIMoveSpeed() {
 		return 0.6F;
 	}
+	
+	public ItemStack getItemStackSlot(int slot) {
+		return (ItemStack) this.getEquipmentInSlot(slot);
+	}
+	
+	public void dropItemSlot(int slot) {
+		this.dropItem(this.getItemStackSlot(slot).getItem(), 1);
+	}
+	
+	
 	
 //	Makes slave drop whatever their currently held item is
 	public void dropHeldItem() {
