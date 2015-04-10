@@ -21,6 +21,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIBeg;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMate;
@@ -120,11 +121,12 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.gladiatorSkill = 0;
 		this.gladiatorSkill = this.getGladiatorSkill();
 		
-		this.revoltLevel = 0;
+		this.revoltLevel = 90;
 		this.hungerLevel = 0;
 		this.thirstLevel = 0;
 		
 		this.thoughtTick = 0;
+		
 	}
 	
 	public int getTextureType() {
@@ -204,10 +206,16 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	protected void setAIRevolting() {
 		this.clearAITasks();
+		this.tasks.addTask(1, new EntityAISwimming(this));
+        this.tasks.addTask(1, new AIOpenDoor(this, true));
 		this.tasks.addTask(1, new EntityAILeapAtTarget(this, 0.4F));
 	    this.tasks.addTask(2, new EntityAIAttackOnCollide(this, 1.0D, true));
+	    this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true));
 	    this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 200, false));
-	    this.aiSit.setSitting(false);
+        this.targetTasks.addTask(4, new EntityAITargetNonTamed(this, EntityPlayer.class, 200, false));
+        this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        
+        this.aiSit.setSitting(false);
 	}
 	
 	protected void FollowOwner () {
@@ -307,11 +315,12 @@ public class EntityEnslavedVillager extends EntityWolf {
 
 	
 	public void revolt() {
-		this.isRevolting = true;
-		this.setTamed(false);
-		this.setAngry(true);
-		
-		this.setAIRevolting();
+		if (!this.isRevolting) {
+			this.isRevolting = true;
+			this.setTamed(false);
+			this.setAngry(true);
+			this.setAIRevolting();
+		}
 	}
 	
 	
@@ -385,11 +394,12 @@ public class EntityEnslavedVillager extends EntityWolf {
 			     Enslave.log.info("RevoltLevel: " + this.getRevoltLevel());
 			 }
 			 
+			 
+			 
 			 this.thoughtTick = 0;
 		 } else {
 			 this.thoughtTick++;
-		 }
-		
+		 } 
 		 
 		 
 	}
@@ -569,7 +579,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 		if (this.action == 0) {
 			this.action = 6;
 			this.worldObj.setEntityState(this, (byte)4);
-
+			
 		    // damage slave's tool
 //		    this.damageHeldItem(5);
 			this.increaseSkillBasedOnHeldItem(1);
@@ -628,6 +638,17 @@ public class EntityEnslavedVillager extends EntityWolf {
 					   heldItem == Items.diamond_shovel) {				
 				this.slaveStrength = 10;				
 			}
+			
+			
+			// skill bonus
+			if (heldItem instanceof ItemAxe) {
+				this.slaveStrength = this.slaveStrength + (this.getLumberjackSkill()/100);
+			} else if (heldItem instanceof ItemHoe) {
+				this.slaveStrength = this.slaveStrength + (this.getFarmerSkill()/100);
+			} else if (heldItem instanceof ItemSword) {
+				this.slaveStrength = this.slaveStrength + (this.getGladiatorSkill()/100);
+			}
+			
 		} else { 
 			this.slaveStrength = 1;
 		}
@@ -661,6 +682,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 				this.setAILumberjack();
 			} else if (this.getHeldItem().getItem() instanceof ItemHoe) {
 				this.setAIFarmer();
+			} else if (this.getHeldItem().getItem() instanceof ItemSword) {
+				this.setAIGladiator();
 			}
 		} else {
 			this.setAIBase();
@@ -686,6 +709,13 @@ public class EntityEnslavedVillager extends EntityWolf {
         super.writeEntityToNBT(compound);
         compound.setInteger("TextureType", this.getTextureType());
         compound.setInteger("LashesTaken", this.getLashesTaken());
+        compound.setInteger("RevoltLevel", this.getRevoltLevel());
+        compound.setInteger("HungerLevel", this.getHungerLevel());
+        compound.setInteger("ThirstLevel", this.getThirstLevel());
+        
+        compound.setInteger("LumberjackSkill", this.getLumberjackSkill());
+        compound.setInteger("FarmerSkill", this.getFarmerSkill());
+        compound.setInteger("GladiatorSkill", this.getGladiatorSkill());
     }
 
 	@Override
@@ -693,6 +723,13 @@ public class EntityEnslavedVillager extends EntityWolf {
         super.readEntityFromNBT(compound);
         this.setTextureType(compound.getInteger("TextureType"));
         this.setLashesTaken(compound.getInteger("LashesTaken"));
+        this.setRevoltLevel(compound.getInteger("RevoltLevel"));
+        this.setHungerLevel(compound.getInteger("HungerLevel"));
+        this.setThirstLevel(compound.getInteger("ThirstLevel"));
+        
+        this.setLumberjackSkill(compound.getInteger("LumberjackSkill"));
+        this.setFarmerSkill(compound.getInteger("FarmerSkill"));
+        this.setGladiatorSkill(compound.getInteger("GladiatorSkill"));
     }
 	
 }
