@@ -59,14 +59,13 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 public class EntityEnslavedVillager extends EntityWolf {
 	
 	public static final RegistryNamespaced itemRegistry = GameData.getItemRegistry();
-	public Integer textureType;
+
 	private static final Float modelHeight = 1.8F;
 	private static final Float modelWidth = 0.6F;
 	
 	public static int slaveDelay = 5;
     public static int slaveIgnoreDelay = 10000;
     private int slaveStrength = 1;
-    
 	
 	public int action = 0;
 	public int leftArm = 0;
@@ -78,27 +77,22 @@ public class EntityEnslavedVillager extends EntityWolf {
 	private int heldItemDamage;
 	
 	// revolt increases the longer a slave is held without supervision
-	private int lashesTaken;
-	private int hungerLevel;
-	private int thirstLevel;
-	private int revoltLevel;
 	private boolean isRevolting;
+	private int revoltThreshold = 250;
+	private int hungerThreshold = 150;
+	private int starvingThreshold = 1000;
 	
 	private int thoughtTick;
 	
-	private int lumberjackSkill;
-	private int farmerSkill;
-	private int gladiatorSkill;
 	
 	// Watchers need to sync client and server side for rendering purposes
-	private final int TEXTURE_TYPE_WATCHER = 26;
+	private final int TEXTURE_TYPE_WATCHER = 25;
+	private final int LASHES_WATCHER = 26;
 	private final int REVOLT_LEVEL_WATCHER = 27;
 	private final int HUNGER_WATCHER = 28;
-//	private final int THIRST_WATCHER = 29;
 	private final int LUMBERJACK_SKILL = 29;
 	private final int FARMER_SKILL = 30;
 	private final int GLADIATOR_SKILL = 31;
-	
 	
 	
 	public EntityEnslavedVillager(World world) {
@@ -109,6 +103,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.getNavigator().setAvoidsWater(true);
 		this.FollowOwner();	
 		
+		this.dataWatcher.addObject(LASHES_WATCHER, Integer.valueOf(0));
 		this.dataWatcher.addObject(TEXTURE_TYPE_WATCHER, Integer.valueOf(0));
 		this.dataWatcher.addObject(REVOLT_LEVEL_WATCHER, Integer.valueOf(0));
 		this.dataWatcher.addObject(HUNGER_WATCHER, Integer.valueOf(0));
@@ -117,32 +112,23 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.dataWatcher.addObject(GLADIATOR_SKILL, Integer.valueOf(0));
 		
 		int randNum = this.rand.nextInt(2) + 1;
-		this.textureType = randNum;
-		this.textureType = this.getTextureType();
+		this.setTextureType(randNum);
 		
-		this.lashesTaken = 0;
-		this.lashesTaken = this.getLashesTaken();
+		this.getLashesTaken();
 		
-		this.lumberjackSkill = 0;
-		this.lumberjackSkill = this.getLumberjackSkill();
+		this.getLumberjackSkill();
 		
-		this.farmerSkill = 0;
-		this.farmerSkill = this.getFarmerSkill();
+		this.getFarmerSkill();
 		
-		this.gladiatorSkill = 0;
-		this.gladiatorSkill = this.getGladiatorSkill();
+		this.getGladiatorSkill();
 		
-		this.revoltLevel = 0;
-		this.revoltLevel = this.getRevoltLevel();
+		this.getRevoltLevel();
 		
-		this.hungerLevel = 0;
-		this.hungerLevel = this.getHungerLevel();
-		
-//		this.thirstLevel = 0;
+		this.getHungerLevel();
 		
 		this.thoughtTick = 0;
 		
-
+		this.isRevolting = false;
 		this.getSlaveStrength();
 		this.setAIByHeldItem();
 		
@@ -153,7 +139,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public void setTextureType(int type) {
-		this.textureType = type;
 		this.dataWatcher.updateObject(TEXTURE_TYPE_WATCHER, Integer.valueOf(type));
 	}	
 
@@ -186,7 +171,6 @@ public class EntityEnslavedVillager extends EntityWolf {
         this.tasks.addTask(7, new EntityAIMate(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWander(this, 1.0D));
         this.tasks.addTask(10, new EntityAILookIdle(this));
-       
 	}
 	
 	protected void setAILumberjack() {
@@ -261,6 +245,16 @@ public class EntityEnslavedVillager extends EntityWolf {
     }
 	
 	@Override
+	protected String getSwimSound() {
+        return "game.hostile.swim";
+    }
+
+	@Override
+    protected String getSplashSound() {
+        return "game.hostile.swim.splash";
+    }
+	
+	@Override
 	public float getEyeHeight()  {
         return this.height * modelHeight;
     }
@@ -295,7 +289,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public void setLumberjackSkill(int amount) {
-		this.lumberjackSkill = amount;
 		this.dataWatcher.updateObject(LUMBERJACK_SKILL, Integer.valueOf(amount));
 	}
 	
@@ -304,7 +297,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public void setFarmerSkill(int amount) {
-		this.farmerSkill = amount;
 		this.dataWatcher.updateObject(FARMER_SKILL, Integer.valueOf(amount));
 	}
 	
@@ -313,7 +305,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public void setGladiatorSkill(int amount) {
-		this.gladiatorSkill = amount;
 		this.dataWatcher.updateObject(GLADIATOR_SKILL, Integer.valueOf(amount));
 	}
 	
@@ -322,7 +313,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public void setRevoltLevel(int amount) {
-		this.revoltLevel = amount;
 		this.dataWatcher.updateObject(REVOLT_LEVEL_WATCHER, Integer.valueOf(amount));
 	}
 	
@@ -331,7 +321,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public boolean shouldRevolt() {
-		if (this.getRevoltLevel() >= 100) {
+		if (this.getRevoltLevel() >= this.revoltThreshold) {
 			return true;
 		}
 		return false;
@@ -353,24 +343,15 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public void setHungerLevel(int amount) {
-		this.hungerLevel = amount;
 		this.dataWatcher.updateObject(HUNGER_WATCHER, Integer.valueOf(amount));
 	}
 	
 	public boolean isHungry() {
-		if (this.getHungerLevel() >= 100) {
+		if (this.getHungerLevel() >= this.hungerThreshold) {
 			return true;
 		} 
 		return false;
 	}
-	
-//	public int getThirstLevel() {
-//		return this.thirstLevel;
-//	}
-	
-//	public void setThirstLevel(int amount) {
-//		this.thirstLevel = amount;
-//	}
 
 	public void increaseSkillBasedOnHeldItem(int amount) {
 		if (this.getHeldItem() != null) {
@@ -496,9 +477,6 @@ public class EntityEnslavedVillager extends EntityWolf {
         return flag;
     }
 
-    /**
-     * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
-     */
 	@Override
     protected void attackEntity(Entity p_70785_1_, float p_70785_2_) {
         if (this.attackTime <= 0 && p_70785_2_ < 2.0F && p_70785_1_.boundingBox.maxY > this.boundingBox.minY && p_70785_1_.boundingBox.minY < this.boundingBox.maxY)
@@ -526,10 +504,10 @@ public class EntityEnslavedVillager extends EntityWolf {
 			 }
 			 
 			 
-			 if (this.getRevoltLevel() >= 100) {
-				 // past revolt threshold
-				 this.revolt();
-			 }
+			 
+			 // past revolt threshold
+			 this.revolt();
+			 
 			 
 			 // reset thought tick
 			 this.thoughtTick = 0;
@@ -541,7 +519,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public void lashSlave(EntityPlayer player) {
-		this.lashesTaken++;
+		this.setLashesTaken(this.getLashesTaken() + 1);
 		this.attackEntityFrom(DamageSource.generic, 1);
 		this.setRevoltLevel(this.getRevoltLevel() + 1);
 		
@@ -549,16 +527,16 @@ public class EntityEnslavedVillager extends EntityWolf {
 		player.worldObj.playSoundAtEntity(player, "enslave:whip", 1.0F, 1.0F / (this.rand.nextFloat() * 0.4F + 0.8F));        
         
 		if (!this.worldObj.isRemote) {
-			Enslave.log.info("Slave has been lashed " + this.lashesTaken + " times.");
+			Enslave.log.info("Slave has been lashed " + this.getLashesTaken() + " times.");
 		}
 	}
 	
 	public int getLashesTaken() {
-		return this.lashesTaken;
+		return this.dataWatcher.getWatchableObjectInt(LASHES_WATCHER); 
 	}
 	
 	public void setLashesTaken(int lashes) {
-		this.lashesTaken = lashes;
+		this.dataWatcher.updateObject(LASHES_WATCHER, Integer.valueOf(lashes));
 	}
 	
 	@Override
@@ -612,15 +590,16 @@ public class EntityEnslavedVillager extends EntityWolf {
             		// feed slave
                     ItemFood itemfood = (ItemFood)itemstack.getItem();
 
-                    if (this.dataWatcher.getWatchableObjectFloat(18) < 20.0F) {
+                    if (this.dataWatcher.getWatchableObjectFloat(18) < 20.0F || this.getHungerLevel() > 0) {
                         if (!player.capabilities.isCreativeMode) {
                             --itemstack.stackSize;
                         }
 
                         this.heal((float)itemfood.func_150905_g(itemstack));
                         
-                        this.setHungerLevel(this.getHungerLevel() - itemfood.func_150905_g(itemstack));
-                        this.setRevoltLevel(this.getRevoltLevel() - itemfood.func_150905_g(itemstack));
+                        // well fed slaves are happy slaves
+                        this.setHungerLevel(this.getHungerLevel() - (2 * itemfood.func_150905_g(itemstack)));
+                        this.setRevoltLevel(this.getRevoltLevel() - (2 * itemfood.func_150905_g(itemstack)));
                         
                         
                         if (itemstack.stackSize <= 0) {
@@ -630,6 +609,7 @@ public class EntityEnslavedVillager extends EntityWolf {
                         return true;
                     } else if (itemstack.getItem() instanceof ItemArmor) {
                     	// equip armor, drop current armor in slot if equipped
+                    	
                     }
                 } 
             }  else if (itemstack == null) {
@@ -844,16 +824,27 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 
 	@Override
-    public void writeEntityToNBT(NBTTagCompound compound) {
-        super.writeEntityToNBT(compound);
-//        compound.setInteger("TextureType", this.getTextureType());
+    public void writeEntityToNBT(NBTTagCompound properties) {
+        super.writeEntityToNBT(properties);
+        properties.setInteger("TextureType", this.getTextureType());
+		properties.setInteger("LashesTaken", this.getLashesTaken());
+		properties.setInteger("RevoltLevel", this.getRevoltLevel());
+		properties.setInteger("HungerLevel", this.getHungerLevel());
+		properties.setInteger("LumberjackSkill", this.getLumberjackSkill());
+		properties.setInteger("FarmerSkill", this.getFarmerSkill());
+		properties.setInteger("GladiatorSkill", this.getGladiatorSkill());
     }
 
 	@Override
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
-//        this.setTextureType(compound.getInteger("TextureType"));
-		
+        this.setTextureType(compound.getInteger("TextureType"));
+		this.setLashesTaken(compound.getInteger("LashesTaken"));
+        this.setRevoltLevel(compound.getInteger("RevoltLevel"));
+        this.setHungerLevel(compound.getInteger("HungerLevel"));
+        this.setLumberjackSkill(compound.getInteger("LumberjackSkill"));
+        this.setFarmerSkill(compound.getInteger("FarmerSkill"));
+        this.setGladiatorSkill(compound.getInteger("GladiatorSkill"));
     }
 	
 }

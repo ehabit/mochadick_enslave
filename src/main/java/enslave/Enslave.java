@@ -48,7 +48,7 @@ public class Enslave {
     	log.info("Registering entities");
     	EntityEnslavedVillager.mainRegistry();
     	
-    	MinecraftForge.EVENT_BUS.register(new EnslavedVillagerSyncHandler());
+//    	MinecraftForge.EVENT_BUS.register(new EnslavedVillagerSyncHandler());
     }
     
     @EventHandler

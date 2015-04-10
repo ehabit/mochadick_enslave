@@ -44,12 +44,12 @@ public class ExtendedSlave implements IExtendedEntityProperties {
 	public void loadNBTData(NBTTagCompound compound) {
 		NBTTagCompound properties = (NBTTagCompound) compound.getTag(EXT_PROP_NAME);
 		this.slave.setTextureType(properties.getInteger("TextureType"));
-		this.slave.setLashesTaken(compound.getInteger("LashesTaken"));
-        this.slave.setRevoltLevel(compound.getInteger("RevoltLevel"));
-        this.slave.setHungerLevel(compound.getInteger("HungerLevel"));
-        this.slave.setLumberjackSkill(compound.getInteger("LumberjackSkill"));
-        this.slave.setFarmerSkill(compound.getInteger("FarmerSkill"));
-        this.slave.setGladiatorSkill(compound.getInteger("GladiatorSkill"));
+		this.slave.setLashesTaken(properties.getInteger("LashesTaken"));
+        this.slave.setRevoltLevel(properties.getInteger("RevoltLevel"));
+        this.slave.setHungerLevel(properties.getInteger("HungerLevel"));
+        this.slave.setLumberjackSkill(properties.getInteger("LumberjackSkill"));
+        this.slave.setFarmerSkill(properties.getInteger("FarmerSkill"));
+        this.slave.setGladiatorSkill(properties.getInteger("GladiatorSkill"));
 	}
 
 

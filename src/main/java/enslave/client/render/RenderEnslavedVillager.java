@@ -95,7 +95,7 @@ public class RenderEnslavedVillager extends RenderBiped {
 
 	
 	protected ResourceLocation getEntityTexture(Entity entity) {
-		if (((EntityEnslavedVillager) entity).textureType == 1) {
+		if (((EntityEnslavedVillager) entity).getTextureType() == 1) {
 			return enslavedVillagerTexture;
 		} else {
 			return enslavedVillagerTexture2;
