@@ -14,10 +14,12 @@ import enslave.entity.ai.AIReturnHome;
 import enslave.item.ItemWhip;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIBeg;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
@@ -49,6 +51,7 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.RegistryNamespaced;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
@@ -89,6 +92,12 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	// Watchers need to sync client and server side for rendering purposes
 	private final int TEXTURE_TYPE_WATCHER = 26;
+	private final int REVOLT_LEVEL_WATCHER = 27;
+	private final int HUNGER_WATCHER = 28;
+//	private final int THIRST_WATCHER = 29;
+	private final int LUMBERJACK_SKILL = 29;
+	private final int FARMER_SKILL = 30;
+	private final int GLADIATOR_SKILL = 31;
 	
 	
 	
@@ -98,16 +107,18 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.setSize(modelWidth, modelHeight);
 		
 		this.getNavigator().setAvoidsWater(true);
-		this.FollowOwner();
+		this.FollowOwner();	
 		
 		this.dataWatcher.addObject(TEXTURE_TYPE_WATCHER, Integer.valueOf(0));
+		this.dataWatcher.addObject(REVOLT_LEVEL_WATCHER, Integer.valueOf(0));
+		this.dataWatcher.addObject(HUNGER_WATCHER, Integer.valueOf(0));
+		this.dataWatcher.addObject(LUMBERJACK_SKILL, Integer.valueOf(0));
+		this.dataWatcher.addObject(FARMER_SKILL, Integer.valueOf(0));
+		this.dataWatcher.addObject(GLADIATOR_SKILL, Integer.valueOf(0));
 		
 		int randNum = this.rand.nextInt(2) + 1;
 		this.textureType = randNum;
 		this.textureType = this.getTextureType();
-		
-		this.getSlaveStrength();
-		this.setAIByHeldItem();
 		
 		this.lashesTaken = 0;
 		this.lashesTaken = this.getLashesTaken();
@@ -121,16 +132,24 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.gladiatorSkill = 0;
 		this.gladiatorSkill = this.getGladiatorSkill();
 		
-		this.revoltLevel = 90;
+		this.revoltLevel = 0;
+		this.revoltLevel = this.getRevoltLevel();
+		
 		this.hungerLevel = 0;
-		this.thirstLevel = 0;
+		this.hungerLevel = this.getHungerLevel();
+		
+//		this.thirstLevel = 0;
 		
 		this.thoughtTick = 0;
+		
+
+		this.getSlaveStrength();
+		this.setAIByHeldItem();
 		
 	}
 	
 	public int getTextureType() {
-		return this.dataWatcher.getWatchableObjectInt(TEXTURE_TYPE_WATCHER); 
+		return this.dataWatcher.getWatchableObjectInt(TEXTURE_TYPE_WATCHER);
 	}
 	
 	public void setTextureType(int type) {
@@ -214,7 +233,9 @@ public class EntityEnslavedVillager extends EntityWolf {
 	    this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 200, false));
         this.targetTasks.addTask(4, new EntityAITargetNonTamed(this, EntityPlayer.class, 200, false));
         this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        
+        this.setPathToEntity((PathEntity)null);
+        this.setTarget((Entity)this.getOwner());
+        this.setAttackTarget((EntityLivingBase)this.getOwner());
         this.aiSit.setSitting(false);
 	}
 	
@@ -275,47 +296,50 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	public void setLumberjackSkill(int amount) {
 		this.lumberjackSkill = amount;
+		this.dataWatcher.updateObject(LUMBERJACK_SKILL, Integer.valueOf(amount));
 	}
 	
 	public int getLumberjackSkill() {
-		return this.lumberjackSkill;
+		return this.dataWatcher.getWatchableObjectInt(LUMBERJACK_SKILL); 
 	}
 	
 	public void setFarmerSkill(int amount) {
 		this.farmerSkill = amount;
+		this.dataWatcher.updateObject(FARMER_SKILL, Integer.valueOf(amount));
 	}
 	
 	public int getFarmerSkill() {
-		return this.farmerSkill;
+		return this.dataWatcher.getWatchableObjectInt(FARMER_SKILL); 
 	}
 	
 	public void setGladiatorSkill(int amount) {
 		this.gladiatorSkill = amount;
+		this.dataWatcher.updateObject(GLADIATOR_SKILL, Integer.valueOf(amount));
 	}
 	
 	public int getGladiatorSkill() {
-		return this.gladiatorSkill;
+		return this.dataWatcher.getWatchableObjectInt(GLADIATOR_SKILL); 
 	}
 	
 	public void setRevoltLevel(int amount) {
 		this.revoltLevel = amount;
+		this.dataWatcher.updateObject(REVOLT_LEVEL_WATCHER, Integer.valueOf(amount));
 	}
 	
 	public int getRevoltLevel() {
-		return this.revoltLevel;
+		return this.dataWatcher.getWatchableObjectInt(REVOLT_LEVEL_WATCHER); 
 	}
 	
 	public boolean shouldRevolt() {
 		if (this.getRevoltLevel() >= 100) {
 			return true;
 		}
-		
 		return false;
 	}
 
 	
 	public void revolt() {
-		if (!this.isRevolting) {
+		if (!this.isRevolting && this.shouldRevolt()) {
 			this.isRevolting = true;
 			this.setTamed(false);
 			this.setAngry(true);
@@ -325,20 +349,28 @@ public class EntityEnslavedVillager extends EntityWolf {
 	
 	
 	public int getHungerLevel() {
-		return this.hungerLevel;
+		return this.dataWatcher.getWatchableObjectInt(HUNGER_WATCHER); 
 	}
 	
 	public void setHungerLevel(int amount) {
 		this.hungerLevel = amount;
+		this.dataWatcher.updateObject(HUNGER_WATCHER, Integer.valueOf(amount));
 	}
 	
-	public int getThirstLevel() {
-		return this.thirstLevel;
+	public boolean isHungry() {
+		if (this.getHungerLevel() >= 100) {
+			return true;
+		} 
+		return false;
 	}
 	
-	public void setThirstLevel(int amount) {
-		this.thirstLevel = amount;
-	}
+//	public int getThirstLevel() {
+//		return this.thirstLevel;
+//	}
+	
+//	public void setThirstLevel(int amount) {
+//		this.thirstLevel = amount;
+//	}
 
 	public void increaseSkillBasedOnHeldItem(int amount) {
 		if (this.getHeldItem() != null) {
@@ -361,7 +393,6 @@ public class EntityEnslavedVillager extends EntityWolf {
             ((EntityEnslavedVillager)var8).setLocationAndAngles(var2, var4, var6, var0.rand.nextFloat() * 360.0F, 0.0F);
             var0.spawnEntityInWorld((EntityEnslavedVillager)var8);
         }
-
         return var8 != null;
     }
 	
@@ -370,19 +401,112 @@ public class EntityEnslavedVillager extends EntityWolf {
 		EntityPlayer owner = (EntityPlayer) this.getOwner();
 				 
 		if (owner != null) {
-				 // If within FOV and can be seen, stop movement
-				 if(this.canEntityBeSeen(owner)) {
-					 // owner is watching	
-					 Enslave.log.info("Owner is watching!");
-					 return true;
-				 } else {
-					 Enslave.log.info("Owner is gone, time to dream of freedom!");
-					 return false;
-					 
-				 }
+			if(this.canEntityBeSeen(owner)) {
+//				Enslave.log.info("Owner is watching!");
+				return true;
+			} else {
+//				Enslave.log.info("Owner is gone, time to dream of freedom!");
+				return false;
+			}
 		}
 		return false;
 	}
+	
+	@Override
+	protected Entity findPlayerToAttack() {
+        EntityPlayer entityplayer = this.worldObj.getClosestVulnerablePlayerToEntity(this, 16.0D);
+        return entityplayer != null && this.canEntityBeSeen(entityplayer) ? entityplayer : null;
+    }
+	
+	@Override
+	public boolean attackEntityFrom(DamageSource p_70097_1_, float p_70097_2_)
+    {
+        if (this.isEntityInvulnerable())
+        {
+            return false;
+        }
+        else if (super.attackEntityFrom(p_70097_1_, p_70097_2_))
+        {
+            Entity entity = p_70097_1_.getEntity();
+
+            if (this.riddenByEntity != entity && this.ridingEntity != entity)
+            {
+                if (entity != this)
+                {
+                    this.entityToAttack = entity;
+                }
+
+                return true;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+	
+	@Override
+	protected void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
+		this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3D);
+	}
+	
+	@Override
+	public boolean attackEntityAsMob(Entity p_70652_1_) {
+        float f = (float)this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
+        int i = 0;
+
+        if (p_70652_1_ instanceof EntityLivingBase)
+        {
+            f += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLivingBase)p_70652_1_);
+            i += EnchantmentHelper.getKnockbackModifier(this, (EntityLivingBase)p_70652_1_);
+        }
+
+        boolean flag = p_70652_1_.attackEntityFrom(DamageSource.causeMobDamage(this), f);
+
+        if (flag)
+        {
+            if (i > 0)
+            {
+                p_70652_1_.addVelocity((double)(-MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F) * (float)i * 0.5F), 0.1D, (double)(MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F) * (float)i * 0.5F));
+                this.motionX *= 0.6D;
+                this.motionZ *= 0.6D;
+            }
+
+            int j = EnchantmentHelper.getFireAspectModifier(this);
+
+            if (j > 0)
+            {
+                p_70652_1_.setFire(j * 4);
+            }
+
+            if (p_70652_1_ instanceof EntityLivingBase)
+            {
+                EnchantmentHelper.func_151384_a((EntityLivingBase)p_70652_1_, this);
+            }
+
+            EnchantmentHelper.func_151385_b(this, p_70652_1_);
+        }
+
+        return flag;
+    }
+
+    /**
+     * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
+     */
+	@Override
+    protected void attackEntity(Entity p_70785_1_, float p_70785_2_) {
+        if (this.attackTime <= 0 && p_70785_2_ < 2.0F && p_70785_1_.boundingBox.maxY > this.boundingBox.minY && p_70785_1_.boundingBox.minY < this.boundingBox.maxY)
+        {
+            this.attackTime = 20;
+            this.attackEntityAsMob(p_70785_1_);
+        }
+    }
 	
 	@Override
 	public void onUpdate() {
@@ -390,12 +514,24 @@ public class EntityEnslavedVillager extends EntityWolf {
 		 
 		 if (this.thoughtTick >= 100) {
 			 if (!this.isSupervised()) {
+				 // slave is not supervised
 				 this.setRevoltLevel(this.getRevoltLevel() + 3);
-			     Enslave.log.info("RevoltLevel: " + this.getRevoltLevel());
+				 if (!this.worldObj.isRemote) {
+					 Enslave.log.info("RevoltLevel: " + this.getRevoltLevel());
+				 }
+			 }
+			 
+			 if (this.isHungry()) {
+				 this.setRevoltLevel(this.getRevoltLevel() + 5);
 			 }
 			 
 			 
+			 if (this.getRevoltLevel() >= 100) {
+				 // past revolt threshold
+				 this.revolt();
+			 }
 			 
+			 // reset thought tick
 			 this.thoughtTick = 0;
 		 } else {
 			 this.thoughtTick++;
@@ -710,29 +846,14 @@ public class EntityEnslavedVillager extends EntityWolf {
 	@Override
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
-        compound.setInteger("TextureType", this.getTextureType());
-        compound.setInteger("LashesTaken", this.getLashesTaken());
-        compound.setInteger("RevoltLevel", this.getRevoltLevel());
-        compound.setInteger("HungerLevel", this.getHungerLevel());
-        compound.setInteger("ThirstLevel", this.getThirstLevel());
-        
-        compound.setInteger("LumberjackSkill", this.getLumberjackSkill());
-        compound.setInteger("FarmerSkill", this.getFarmerSkill());
-        compound.setInteger("GladiatorSkill", this.getGladiatorSkill());
+//        compound.setInteger("TextureType", this.getTextureType());
     }
 
 	@Override
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
-        this.setTextureType(compound.getInteger("TextureType"));
-        this.setLashesTaken(compound.getInteger("LashesTaken"));
-        this.setRevoltLevel(compound.getInteger("RevoltLevel"));
-        this.setHungerLevel(compound.getInteger("HungerLevel"));
-        this.setThirstLevel(compound.getInteger("ThirstLevel"));
-        
-        this.setLumberjackSkill(compound.getInteger("LumberjackSkill"));
-        this.setFarmerSkill(compound.getInteger("FarmerSkill"));
-        this.setGladiatorSkill(compound.getInteger("GladiatorSkill"));
+//        this.setTextureType(compound.getInteger("TextureType"));
+		
     }
 	
 }

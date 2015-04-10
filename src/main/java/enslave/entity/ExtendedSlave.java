@@ -27,8 +27,14 @@ public class ExtendedSlave implements IExtendedEntityProperties {
 	@Override
 	public void saveNBTData(NBTTagCompound compound) {
 		NBTTagCompound properties = new NBTTagCompound();
-		
 		properties.setInteger("TextureType", this.slave.getTextureType());
+		properties.setInteger("LashesTaken", this.slave.getLashesTaken());
+		properties.setInteger("RevoltLevel", this.slave.getRevoltLevel());
+		properties.setInteger("HungerLevel", this.slave.getHungerLevel());
+		properties.setInteger("LumberjackSkill", this.slave.getLumberjackSkill());
+		properties.setInteger("FarmerSkill", this.slave.getFarmerSkill());
+		properties.setInteger("GladiatorSkill", this.slave.getGladiatorSkill());
+		
 		
 		compound.setTag(EXT_PROP_NAME, properties);
 	}
@@ -38,6 +44,12 @@ public class ExtendedSlave implements IExtendedEntityProperties {
 	public void loadNBTData(NBTTagCompound compound) {
 		NBTTagCompound properties = (NBTTagCompound) compound.getTag(EXT_PROP_NAME);
 		this.slave.setTextureType(properties.getInteger("TextureType"));
+		this.slave.setLashesTaken(compound.getInteger("LashesTaken"));
+        this.slave.setRevoltLevel(compound.getInteger("RevoltLevel"));
+        this.slave.setHungerLevel(compound.getInteger("HungerLevel"));
+        this.slave.setLumberjackSkill(compound.getInteger("LumberjackSkill"));
+        this.slave.setFarmerSkill(compound.getInteger("FarmerSkill"));
+        this.slave.setGladiatorSkill(compound.getInteger("GladiatorSkill"));
 	}
 
 
