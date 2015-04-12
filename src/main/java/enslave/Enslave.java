@@ -14,6 +14,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import enslave.entity.EntityEnslavedVillager;
+import enslave.item.ItemChattelProd;
 import enslave.item.ItemShackles;
 import enslave.item.ItemWhip;
 import enslave.network.handler.EnslavedVillagerSyncHandler;
@@ -37,6 +38,7 @@ public class Enslave {
 	   
     public static ItemShackles shackles;
     public static ItemWhip whip;
+    public static ItemChattelProd chattelProd;
     
     
     @EventHandler
@@ -44,6 +46,7 @@ public class Enslave {
     	log.info("Registering items");
     	shackles.mainRegistry();
     	whip.mainRegistry();
+    	chattelProd.mainRegistry();
     	
     	log.info("Registering entities");
     	EntityEnslavedVillager.mainRegistry();

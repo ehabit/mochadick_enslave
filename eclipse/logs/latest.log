@@ -1,34 +1,32 @@
-[22:08:22] [main/INFO]: Setting user: Player533
-[22:08:27] [Client thread/INFO]: LWJGL Version: 2.9.1
-[22:08:27] [Client thread/ERROR]: Couldn't initialize twitch stream
-[22:08:36] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
-[22:08:38] [Sound Library Loader/INFO]: Sound engine started
-[22:08:40] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
-[22:08:41] [Client thread/INFO]: Created: 256x256 textures/items-atlas
-[22:08:41] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
-[22:08:41] [Client thread/INFO]: Created: 256x256 textures/items-atlas
-[22:08:42] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
-[22:08:43] [Sound Library Loader/INFO]: Sound engine started
-[22:09:08] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
-[22:09:08] [Server thread/INFO]: Generating keypair
-[22:09:09] [Server thread/INFO]: Preparing start region for level 0
-[22:09:10] [Server thread/INFO]: Preparing spawn area: 26%
-[22:09:11] [Server thread/INFO]: Preparing spawn area: 69%
-[22:09:13] [Server thread/INFO]: Changing view distance to 12, from 10
-[22:09:13] [Server thread/INFO]: Player533[local:E:cf934bfe] logged in with entity id 664 at (104.96346116912939, 63.0, 151.60519321518655)
-[22:09:13] [Server thread/INFO]: Player533 joined the game
-[22:09:21] [Server thread/WARN]: Can't keep up! Did the system time change, or is the server overloaded? Running 7920ms behind, skipping 158 tick(s)
-[22:09:33] [Server thread/WARN]: Can't keep up! Did the system time change, or is the server overloaded? Running 3071ms behind, skipping 61 tick(s)
-[22:11:48] [Server thread/INFO]: Player533 has just earned the achievement [Taking Inventory]
-[22:11:48] [Client thread/INFO]: [CHAT] Player533 has just earned the achievement [Taking Inventory]
-[22:12:01] [Server thread/INFO]: Saving and pausing game...
-[22:12:01] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
-[22:12:01] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
-[22:12:01] [Server thread/INFO]: Saving chunks for level 'New World'/The End
-[22:12:02] [Server thread/INFO]: Stopping server
-[22:12:02] [Server thread/INFO]: Saving players
-[22:12:02] [Server thread/INFO]: Saving worlds
-[22:12:02] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
-[22:12:02] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
-[22:12:02] [Server thread/INFO]: Saving chunks for level 'New World'/The End
-[22:12:04] [Client thread/INFO]: Stopping!
+[23:38:42] [main/INFO]: Setting user: Player626
+[23:38:47] [Client thread/INFO]: LWJGL Version: 2.9.1
+[23:38:48] [Client thread/ERROR]: Couldn't initialize twitch stream
+[23:38:59] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
+[23:39:02] [Sound Library Loader/INFO]: Sound engine started
+[23:39:04] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
+[23:39:04] [Client thread/INFO]: Created: 1024x1024 textures/items-atlas
+[23:39:05] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Enslave
+[23:39:05] [Client thread/INFO]: Created: 1024x1024 textures/items-atlas
+[23:39:06] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
+[23:39:07] [Sound Library Loader/INFO]: Sound engine started
+[23:39:11] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
+[23:39:11] [Server thread/INFO]: Generating keypair
+[23:39:13] [Server thread/INFO]: Preparing start region for level 0
+[23:39:14] [Server thread/INFO]: Preparing spawn area: 22%
+[23:39:15] [Server thread/INFO]: Preparing spawn area: 53%
+[23:39:16] [Server thread/INFO]: Changing view distance to 12, from 10
+[23:39:17] [Server thread/INFO]: Player626[local:E:4f208515] logged in with entity id 118 at (127.13994865007712, 64.0, 147.40365346258034)
+[23:39:17] [Server thread/INFO]: Player626 joined the game
+[23:39:18] [Server thread/WARN]: Can't keep up! Did the system time change, or is the server overloaded? Running 2082ms behind, skipping 41 tick(s)
+[23:39:33] [Client thread/INFO]: [CHAT] Saved screenshot as 2015-04-11_23.39.31.png
+[23:39:34] [Server thread/INFO]: Saving and pausing game...
+[23:39:34] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
+[23:39:34] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
+[23:39:34] [Server thread/INFO]: Saving chunks for level 'New World'/The End
+[23:39:35] [Server thread/INFO]: Stopping server
+[23:39:35] [Server thread/INFO]: Saving players
+[23:39:35] [Server thread/INFO]: Saving worlds
+[23:39:35] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
+[23:39:35] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
+[23:39:35] [Server thread/INFO]: Saving chunks for level 'New World'/The End
+[23:39:37] [Client thread/INFO]: Stopping!

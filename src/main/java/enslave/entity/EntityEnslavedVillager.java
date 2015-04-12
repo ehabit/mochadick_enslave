@@ -171,11 +171,11 @@ public class EntityEnslavedVillager extends EntityWolf {
 	protected void setAIBase() {
         this.tasks.addTask(1, new EntityAISwimming(this));
         this.tasks.addTask(1, new AIOpenDoor(this, true));
-        this.tasks.addTask(3, this.aiSit);
         this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(7, new EntityAIMate(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWander(this, 1.0D));
         this.tasks.addTask(10, new EntityAILookIdle(this));
+        this.tasks.addTask(11, this.aiSit);
         this.aiSit.setSitting(false);
 	}
 	
@@ -213,6 +213,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 
 	protected void setAICollector() {
 		this.clearAITasks();
+		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, (int) this.getRange());
 		this.tasks.addTask(2, new AIPickupItem(this));
 		this.tasks.addTask(8, new AIReturnHome(this));
 		this.setAIBase();
