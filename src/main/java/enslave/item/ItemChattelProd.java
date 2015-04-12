@@ -38,14 +38,14 @@ public class ItemChattelProd extends Item {
     @SideOnly(Side.CLIENT)
     public void whipAtPlayer(EntityPlayer player) {
     	player.swingItem();
-    	player.worldObj.playSoundAtEntity(player, "enslave:chattelprod", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 0.8F));
+    	player.worldObj.playSoundAtEntity(player, "enslave:taser", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 0.8F));
     }
 
     
     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer player) {
         
         player.swingItem();
-        world.playSoundAtEntity(player, "enslave:chattelprod", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 0.8F));        
+        world.playSoundAtEntity(player, "enslave:taser", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 0.8F));        
         
         return itemstack;
     }

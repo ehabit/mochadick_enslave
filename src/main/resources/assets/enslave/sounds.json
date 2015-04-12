@@ -1,3 +1,4 @@
 {
-  "whip": {"category": "master","sounds": [{"name": "whip","stream": false}]}
+  "whip": {"category": "master","sounds": [{"name": "whip","stream": false}]},
+  "taser": {"category": "master","sounds": [{"name": "taser","stream": false}]}
 }
