@@ -10,10 +10,12 @@ import enslave.Enslave;
 import enslave.entity.ai.AIHarvestCrops;
 import enslave.entity.ai.AIHarvestLogs;
 import enslave.entity.ai.AIOpenDoor;
+import enslave.entity.ai.AIPickupItem;
 import enslave.entity.ai.AIReturnHome;
 import enslave.item.ItemWhip;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
+import net.minecraft.block.BlockTorch;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -58,6 +60,9 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 
 public class EntityEnslavedVillager extends EntityWolf {
 	
+	public InventoryMob inventory = new InventoryMob(this, 1);
+	public ItemStack itemCarried;
+	
 	public static final RegistryNamespaced itemRegistry = GameData.getItemRegistry();
 
 	private static final Float modelHeight = 1.8F;
@@ -81,19 +86,19 @@ public class EntityEnslavedVillager extends EntityWolf {
 	private int revoltThreshold = 250;
 	private int hungerThreshold = 150;
 	private int starvingThreshold = 1000;
+	private int lashesTaken;
+	private int gladiatorSkill;
+	private int farmerSkill;
+	private int lumberjackSkill;
 	
 	private int thoughtTick;
 	
 	
 	// Watchers need to sync client and server side for rendering purposes
 	private final int TEXTURE_TYPE_WATCHER = 25;
-	private final int LASHES_WATCHER = 26;
 	private final int REVOLT_LEVEL_WATCHER = 27;
 	private final int HUNGER_WATCHER = 28;
-	private final int LUMBERJACK_SKILL = 29;
-	private final int FARMER_SKILL = 30;
-	private final int GLADIATOR_SKILL = 31;
-	
+	private final int CARRIED_WATCHER = 26;
 	
 	public EntityEnslavedVillager(World world) {
 		super(world);
@@ -103,13 +108,10 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.getNavigator().setAvoidsWater(true);
 		this.FollowOwner();	
 		
-		this.dataWatcher.addObject(LASHES_WATCHER, Integer.valueOf(0));
 		this.dataWatcher.addObject(TEXTURE_TYPE_WATCHER, Integer.valueOf(0));
 		this.dataWatcher.addObject(REVOLT_LEVEL_WATCHER, Integer.valueOf(0));
 		this.dataWatcher.addObject(HUNGER_WATCHER, Integer.valueOf(0));
-		this.dataWatcher.addObject(LUMBERJACK_SKILL, Integer.valueOf(0));
-		this.dataWatcher.addObject(FARMER_SKILL, Integer.valueOf(0));
-		this.dataWatcher.addObject(GLADIATOR_SKILL, Integer.valueOf(0));
+		this.dataWatcher.addObject(CARRIED_WATCHER, Integer.valueOf(0));
 		
 		int randNum = this.rand.nextInt(2) + 1;
 		this.setTextureType(randNum);
@@ -125,6 +127,9 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.getRevoltLevel();
 		
 		this.getHungerLevel();
+		this.lumberjackSkill = 0;
+		this.farmerSkill = 0;
+		this.gladiatorSkill = 0;
 		
 		this.thoughtTick = 0;
 		
@@ -171,6 +176,7 @@ public class EntityEnslavedVillager extends EntityWolf {
         this.tasks.addTask(7, new EntityAIMate(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWander(this, 1.0D));
         this.tasks.addTask(10, new EntityAILookIdle(this));
+        this.aiSit.setSitting(false);
 	}
 	
 	protected void setAILumberjack() {
@@ -179,7 +185,6 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.tasks.addTask(1, new AIHarvestLogs(this));
 		this.tasks.addTask(2, new AIReturnHome(this));
 		this.setAIBase();
-		this.aiSit.setSitting(false);	
 	}
 	
 	protected void setAIFarmer() {
@@ -187,8 +192,7 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.setHomeArea((int) this.posX, (int) this.posY, (int) this.posZ, (int) this.getRange());
 		this.tasks.addTask(1, new AIHarvestCrops(this));
 		this.tasks.addTask(2, new AIReturnHome(this));
-		this.setAIBase();
-		this.aiSit.setSitting(false);	
+		this.setAIBase();	
 	}
 	
 	protected void setAIGladiator() {
@@ -204,7 +208,14 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityCreeper.class, 200, false));	
 		this.tasks.addTask(2, new AIReturnHome(this));
 		this.setAIBase();
-		this.aiSit.setSitting(false);	
+	}
+	
+
+	protected void setAICollector() {
+		this.clearAITasks();
+		this.tasks.addTask(2, new AIPickupItem(this));
+		this.tasks.addTask(8, new AIReturnHome(this));
+		this.setAIBase();
 	}
 	
 	protected void setAIRevolting() {
@@ -274,6 +285,8 @@ public class EntityEnslavedVillager extends EntityWolf {
 			}
 		}
 		
+		dropCarried();
+		
 	}
 	
 	public int getHeldItemDamage() {
@@ -289,27 +302,33 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public void setLumberjackSkill(int amount) {
-		this.dataWatcher.updateObject(LUMBERJACK_SKILL, Integer.valueOf(amount));
+//		this.dataWatcher.updateObject(LUMBERJACK_SKILL, Integer.valueOf(amount));
+		this.lumberjackSkill = amount;
 	}
 	
 	public int getLumberjackSkill() {
-		return this.dataWatcher.getWatchableObjectInt(LUMBERJACK_SKILL); 
+//		return this.dataWatcher.getWatchableObjectInt(LUMBERJACK_SKILL); 
+		return this.lumberjackSkill;
 	}
 	
 	public void setFarmerSkill(int amount) {
-		this.dataWatcher.updateObject(FARMER_SKILL, Integer.valueOf(amount));
+//		this.dataWatcher.updateObject(FARMER_SKILL, Integer.valueOf(amount));
+		this.farmerSkill = amount;
 	}
 	
 	public int getFarmerSkill() {
-		return this.dataWatcher.getWatchableObjectInt(FARMER_SKILL); 
+//		return this.dataWatcher.getWatchableObjectInt(FARMER_SKILL); 
+		return this.farmerSkill;
 	}
 	
 	public void setGladiatorSkill(int amount) {
-		this.dataWatcher.updateObject(GLADIATOR_SKILL, Integer.valueOf(amount));
+//		this.dataWatcher.updateObject(GLADIATOR_SKILL, Integer.valueOf(amount));
+		this.gladiatorSkill = amount;
 	}
 	
 	public int getGladiatorSkill() {
-		return this.dataWatcher.getWatchableObjectInt(GLADIATOR_SKILL); 
+//		return this.dataWatcher.getWatchableObjectInt(GLADIATOR_SKILL); 
+		return this.gladiatorSkill;
 	}
 	
 	public void setRevoltLevel(int amount) {
@@ -532,11 +551,13 @@ public class EntityEnslavedVillager extends EntityWolf {
 	}
 	
 	public int getLashesTaken() {
-		return this.dataWatcher.getWatchableObjectInt(LASHES_WATCHER); 
+//		return this.dataWatcher.getWatchableObjectInt(LASHES_WATCHER); 
+		return this.lashesTaken;
 	}
 	
 	public void setLashesTaken(int lashes) {
-		this.dataWatcher.updateObject(LASHES_WATCHER, Integer.valueOf(lashes));
+//		this.dataWatcher.updateObject(LASHES_WATCHER, Integer.valueOf(lashes));
+		this.lashesTaken = lashes;
 	}
 	
 	@Override
@@ -585,6 +606,13 @@ public class EntityEnslavedVillager extends EntityWolf {
                         --itemstack.stackSize;
                     }
             		this.setAIGladiator();
+            		
+            	} else if (Block.getBlockFromItem(itemstack.getItem()) instanceof BlockTorch) {
+            		this.setHeldItem(itemstack.getItem());
+            		if (!player.capabilities.isCreativeMode) {
+            			--itemstack.stackSize;
+            		}
+            		this.setAICollector();
             		
             	} else if (itemstack.getItem() instanceof ItemFood) {
             		// feed slave
@@ -822,6 +850,45 @@ public class EntityEnslavedVillager extends EntityWolf {
 		this.setHeldItemByType(0);
 	}
 	
+	public int getCarryLimit() {
+	    int base = 1;
+	    base += Math.min(16, Math.max(4, base)) * this.slaveStrength;
+	    return base;
+	  }
+	
+	public int getCarrySpace() {
+	    if (this.itemCarried == null) return getCarryLimit();
+	    return Math.min(getCarryLimit() - this.itemCarried.stackSize, this.itemCarried.getMaxStackSize() - this.itemCarried.stackSize);
+	}
+	
+	public void setCarried(ItemStack stack) {
+	    this.itemCarried = stack;
+	    updateCarried();
+	}
+	
+	public ItemStack getCarried() {
+	    if ((this.itemCarried != null) && (this.itemCarried.stackSize <= 0)) {
+	      setCarried(null);
+	    }
+	    return this.itemCarried;
+	}
+	
+	public void updateCarried()
+	  {
+	    if (this.itemCarried != null) {
+	      getDataWatcher().updateObject(CARRIED_WATCHER, this.itemCarried.copy());
+	      getDataWatcher().setObjectWatched(CARRIED_WATCHER);
+	    } else {
+	      getDataWatcher().addObjectByDataType(CARRIED_WATCHER, 5);
+	      getDataWatcher().setObjectWatched(CARRIED_WATCHER);
+	    }
+	  }
+
+	 public void dropCarried() {
+	    if ((!this.worldObj.isRemote) && (this.itemCarried != null))
+	    	entityDropItem(this.itemCarried, 0.5F);
+	 }
+
 
 	@Override
     public void writeEntityToNBT(NBTTagCompound properties) {
